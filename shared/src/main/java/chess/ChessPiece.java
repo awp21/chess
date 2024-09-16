@@ -11,11 +11,11 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
-    private final ChessGame.TeamColor pieceColor;
+    private final ChessGame.TeamColor color;
     private final PieceType type;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        this.pieceColor = pieceColor;
+    public ChessPiece(ChessGame.TeamColor color, ChessPiece.PieceType type) {
+        this.color = color;
         this.type = type;
     }
 
@@ -35,14 +35,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return color;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
     }
 
     /**
@@ -53,16 +53,48 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        ArrayList<ChessMove> moves = new ArrayList<>();
+        //all pieces right now are rooks
+
+        //loopy here to go through all possible moves
+        int x = 1;
+        int y = 1;
+
+        while(myPosition.getRow()+x <= 8){
+            //if empty
+            ChessPiece piece = board.getPiece(new ChessPosition(myPosition.getRow()+x, myPosition.getColumn()));
+            if(piece == null) {
+                moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + x, myPosition.getColumn()), null));
+            }
+            // if I can take
+            else if(piece != null && piece.getTeamColor() != this.getTeamColor()){
+                moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + x, myPosition.getColumn()), null));
+                break;
+            }
+            else{
+                break;
+            }
+            x++;
+        }
+//        while(myPosition.getColumn()+y <= 8){
+//            moves.add(new ChessMove(myPosition, endPosition, null));
+//        }
+//        while(myPosition.getRow()-x >= 1){
+//            moves.add(new ChessMove(myPosition, endPosition, null));
+//        }
+//        while(myPosition.getColumn()-y >= 1){
+//            moves.add(new ChessMove(myPosition, endPosition, null));
+//        }
 
 
-        return new ArrayList<ChessMove>();
+        return moves;
 
     }
 
     @Override
     public String toString() {
         return "ChessPiece{" +
-                "pieceColor=" + pieceColor +
+                "pieceColor=" + color +
                 ", type=" + type +
                 '}';
     }

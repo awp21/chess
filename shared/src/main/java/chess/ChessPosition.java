@@ -27,6 +27,7 @@ public class ChessPosition {
 
     }
 
+
     /**
      * @return which column this position is in
      * 1 codes for the left row
