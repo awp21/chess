@@ -53,42 +53,21 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ArrayList<ChessMove> moves = new ArrayList<>();
-        //all pieces right now are rooks
-
-        //loopy here to go through all possible moves
-        int x = 1;
-        int y = 1;
-
-        while(myPosition.getRow()+x <= 8){
-            //if empty
-            ChessPiece piece = board.getPiece(new ChessPosition(myPosition.getRow()+x, myPosition.getColumn()));
-            if(piece == null) {
-                moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + x, myPosition.getColumn()), null));
-            }
-            // if I can take
-            else if(piece != null && piece.getTeamColor() != this.getTeamColor()){
-                moves.add(new ChessMove(myPosition, new ChessPosition(myPosition.getRow() + x, myPosition.getColumn()), null));
-                break;
-            }
-            else{
-                break;
-            }
-            x++;
+        switch (type){
+            case ROOK:
+                return RookMoves.getRookMoves(board, myPosition, color);
+            case BISHOP:
+                return null;
+            case KNIGHT:
+                return null;
+            case KING:
+                return null;
+            case QUEEN:
+                return null;
+            case PAWN:
+                return null;
         }
-//        while(myPosition.getColumn()+y <= 8){
-//            moves.add(new ChessMove(myPosition, endPosition, null));
-//        }
-//        while(myPosition.getRow()-x >= 1){
-//            moves.add(new ChessMove(myPosition, endPosition, null));
-//        }
-//        while(myPosition.getColumn()-y >= 1){
-//            moves.add(new ChessMove(myPosition, endPosition, null));
-//        }
-
-
-        return moves;
-
+        return null;
     }
 
     @Override
