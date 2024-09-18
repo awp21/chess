@@ -57,7 +57,7 @@ public class ChessPiece {
             case ROOK:
                 return RookMoves.getRookMoves(board, myPosition, color);
             case BISHOP:
-                return null;
+                return BishopMoves.getBishopMoves(board, myPosition, color);
             case KNIGHT:
                 return null;
             case KING:
