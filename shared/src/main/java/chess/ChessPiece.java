@@ -65,7 +65,7 @@ public class ChessPiece {
             case QUEEN:
                 return QueenMoves.getQueenMoves(board, myPosition, color);
             case PAWN:
-                return null;
+                return PawnMoves.getPawnMoves(board,myPosition,color);
         }
         return null;
     }
