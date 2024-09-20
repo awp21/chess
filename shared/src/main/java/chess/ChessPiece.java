@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -65,7 +66,8 @@ public class ChessPiece {
             case QUEEN:
                 return QueenMoves.getQueenMoves(board, myPosition, color);
             case PAWN:
-                return PawnMoves.getPawnMoves(board,myPosition,color);
+                PawnMoves calculatePawn = new PawnMoves();
+                return calculatePawn.getPawnMoves(board,myPosition,color);
         }
         return null;
     }
@@ -76,5 +78,17 @@ public class ChessPiece {
                 "pieceColor=" + color +
                 ", type=" + type +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChessPiece that)) return false;
+        return color == that.color && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(color, type);
     }
 }

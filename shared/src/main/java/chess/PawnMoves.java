@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class PawnMoves {
-    public static Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition startPosition, ChessGame.TeamColor color) {
+    public Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition startPosition, ChessGame.TeamColor color) {
         ArrayList<ChessMove> moves = new ArrayList<>();
         ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow(), startPosition.getColumn()));
 
@@ -39,22 +39,40 @@ public class PawnMoves {
                 //if empty
                 piece = board.getPiece(new ChessPosition(startPosition.getRow() + ones, startPosition.getColumn()));
                 if (piece == null) {
-                    moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + ones, startPosition.getColumn()), null));
+                    addAllMoves(moves, new ChessPosition(startPosition.getRow()+ones, startPosition.getColumn()),startPosition,color);
                 }
                 // if I can take
-                piece = board.getPiece(new ChessPosition(startPosition.getRow() + ones, startPosition.getColumn()+ones));
+                piece = board.getPiece(new ChessPosition(startPosition.getRow() + ones, startPosition.getColumn()+1));
                 if (piece != null && piece.getTeamColor() != color) {
-                    moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + ones, startPosition.getColumn()-ones), null));
+                    addAllMoves(moves, new ChessPosition(startPosition.getRow()+ones, startPosition.getColumn()+1),startPosition,color);
                 }
-                piece = board.getPiece(new ChessPosition(startPosition.getRow() + ones, startPosition.getColumn()-ones));
+                piece = board.getPiece(new ChessPosition(startPosition.getRow() + ones, startPosition.getColumn()-1));
                 if (piece != null && piece.getTeamColor() != color) {
-                    moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + ones, startPosition.getColumn()-ones), null));
+                    addAllMoves(moves, new ChessPosition(startPosition.getRow()+ones, startPosition.getColumn()-1),startPosition,color);
                 }
             }
-
-
-
-
         return moves;
     }
+
+    public void addAllMoves(Collection<ChessMove> moves, ChessPosition piece, ChessPosition starting, ChessGame.TeamColor color) {
+        if(piece.getRow() == 8 && color == ChessGame.TeamColor.WHITE){
+            addPromotion(moves, piece, starting);
+        }
+        else if (piece.getRow() == 1 && color == ChessGame.TeamColor.BLACK){
+            addPromotion(moves, piece, starting);
+        }
+        else {
+            moves.add(new ChessMove(starting, piece, null));
+        }
+    }
+
+
+    public void addPromotion(Collection<ChessMove> moves, ChessPosition piece, ChessPosition starting){
+        moves.add(new ChessMove(starting, piece, ChessPiece.PieceType.QUEEN));
+        moves.add(new ChessMove(starting, piece, ChessPiece.PieceType.ROOK));
+        moves.add(new ChessMove(starting, piece, ChessPiece.PieceType.BISHOP));
+        moves.add(new ChessMove(starting, piece, ChessPiece.PieceType.KNIGHT));
+    }
+
+
 }
