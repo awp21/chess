@@ -41,14 +41,19 @@ public class PawnMoves {
                 if (piece == null) {
                     addAllMoves(moves, new ChessPosition(startPosition.getRow()+ones, startPosition.getColumn()),startPosition,color);
                 }
-                // if I can take
-                piece = board.getPiece(new ChessPosition(startPosition.getRow() + ones, startPosition.getColumn()+1));
-                if (piece != null && piece.getTeamColor() != color) {
-                    addAllMoves(moves, new ChessPosition(startPosition.getRow()+ones, startPosition.getColumn()+1),startPosition,color);
+                // if I can take right
+                if(startPosition.getColumn()+1<=8){
+                    piece = board.getPiece(new ChessPosition(startPosition.getRow() + ones, startPosition.getColumn()+1));
+                    if (piece != null && piece.getTeamColor() != color) {
+                        addAllMoves(moves, new ChessPosition(startPosition.getRow()+ones, startPosition.getColumn()+1),startPosition,color);
+                    }
                 }
-                piece = board.getPiece(new ChessPosition(startPosition.getRow() + ones, startPosition.getColumn()-1));
-                if (piece != null && piece.getTeamColor() != color) {
-                    addAllMoves(moves, new ChessPosition(startPosition.getRow()+ones, startPosition.getColumn()-1),startPosition,color);
+                // if I can take left
+                if(startPosition.getColumn()-1>=1){
+                    piece = board.getPiece(new ChessPosition(startPosition.getRow() + ones, startPosition.getColumn()-1));
+                    if (piece != null && piece.getTeamColor() != color) {
+                        addAllMoves(moves, new ChessPosition(startPosition.getRow()+ones, startPosition.getColumn()-1),startPosition,color);
+                    }
                 }
             }
         return moves;
