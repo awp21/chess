@@ -7,79 +7,24 @@ public class BishopMoves {
     public static Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition startPosition, ChessGame.TeamColor color){
         ArrayList<ChessMove> moves = new ArrayList<>();
 
-        //loopy here to go through all possible moves
-        int x = 1;
-        // loop through up right
-        while(startPosition.getRow()+x <= 8 && startPosition.getColumn()+x <= 8){
-            //if empty
-            ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow()+x, startPosition.getColumn()+x));
-            if(piece == null) {
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + x, startPosition.getColumn() + x), null));
-            }
-            // if I can take
-            else if(piece.getTeamColor() != color){
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + x, startPosition.getColumn() + x), null));
-                break;
-            }
-            else{
-                break;
-            }
-            x++;
+        boolean t = true;
+        for(int x = 1; x <= 8 && t; x++){
+            t = RookMoves.getMovesHelper(board, startPosition, x, x, moves, color);
         }
-        x = 1;
-        //down right loopy
-        while(startPosition.getRow()-x >= 1 && startPosition.getColumn() + x <= 8){
-            //if empty
-            ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow()-x, startPosition.getColumn() + x));
-            if(piece == null) {
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() - x, startPosition.getColumn() + x), null));
-            }
-            // if I can take
-            else if(piece.getTeamColor() != color){
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() - x, startPosition.getColumn() + x), null));
-                break;
-            }
-            else{
-                break;
-            }
-            x++;
+        t = true;
+        for(int x = -1; x >= -8 && t; x--){
+            t = RookMoves.getMovesHelper(board, startPosition, x, x, moves, color);
         }
-        x = 1;
-        //down left loopy
-        while(startPosition.getRow() - x >= 1 && startPosition.getColumn() - x >= 1){
-            //if empty
-            ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow() - x , startPosition.getColumn() - x));
-            if(piece == null) {
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() - x, startPosition.getColumn() - x), null));
-            }
-            // if I can take
-            else if(piece.getTeamColor() != color){
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() - x , startPosition.getColumn() - x), null));
-                break;
-            }
-            else{
-                break;
-            }
-            x++;
+        t = true;
+        for(int x = 1; x <= 8 && t; x++){
+            t = RookMoves.getMovesHelper(board, startPosition, -x, x, moves, color);
         }
-        x = 1;
-        //Up left loopy
-        while(startPosition.getColumn()-x >= 1 && startPosition.getRow() + x <= 8){
-            //if emptx
-            ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow() + x, startPosition.getColumn() - x));
-            if(piece == null) {
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + x, startPosition.getColumn() - x), null));
-            }
-            // if I can take
-            else if(piece.getTeamColor() != color){
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + x, startPosition.getColumn() - x), null));
-                break;
-            }
-            else{
-                break;
-            }
-            x++;
+        t = true;
+        for(int x = -1; x >= -8 && t; x--){
+            t = RookMoves.getMovesHelper(board, startPosition, -x, x, moves, color);
         }
+
+
         return moves;
     }
 

@@ -47,7 +47,4 @@ public class RookMoves {
         }
         return false;
     }
-
-
-
 }

@@ -7,150 +7,38 @@ public class QueenMoves {
     public static Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition startPosition, ChessGame.TeamColor color) {
         ArrayList<ChessMove> moves = new ArrayList<>();
 
-        //loopy here to go through all possible moves
-        int x = 1;
-        // loop through up right
-        while(startPosition.getRow()+x <= 8 && startPosition.getColumn()+x <= 8){
-            //if empty
-            ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow()+x, startPosition.getColumn()+x));
-            if(piece == null) {
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + x, startPosition.getColumn() + x), null));
-            }
-            // if I can take
-            else if(piece.getTeamColor() != color){
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + x, startPosition.getColumn() + x), null));
-                break;
-            }
-            else{
-                break;
-            }
-            x++;
+        boolean t = true;
+        for(int x = 1; x <= 8 && t; x++){
+            t = RookMoves.getMovesHelper(board, startPosition, x, 0, moves, color);
         }
-        x = 1;
-        //down right loopy
-        while(startPosition.getRow()-x >= 1 && startPosition.getColumn() + x <= 8){
-            //if empty
-            ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow()-x, startPosition.getColumn() + x));
-            if(piece == null) {
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() - x, startPosition.getColumn() + x), null));
-            }
-            // if I can take
-            else if(piece.getTeamColor() != color){
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() - x, startPosition.getColumn() + x), null));
-                break;
-            }
-            else{
-                break;
-            }
-            x++;
+        t = true;
+        for(int x = -1; x >= -8 && t; x--){
+            t = RookMoves.getMovesHelper(board, startPosition, x, 0, moves, color);
         }
-        x = 1;
-        //down left loopy
-        while(startPosition.getRow() - x >= 1 && startPosition.getColumn() - x >= 1){
-            //if empty
-            ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow() - x , startPosition.getColumn() - x));
-            if(piece == null) {
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() - x, startPosition.getColumn() - x), null));
-            }
-            // if I can take
-            else if(piece.getTeamColor() != color){
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() - x , startPosition.getColumn() - x), null));
-                break;
-            }
-            else{
-                break;
-            }
-            x++;
+        t = true;
+        for(int x = 1; x <= 8 && t; x++){
+            t = RookMoves.getMovesHelper(board, startPosition, 0, x, moves, color);
         }
-        x = 1;
-        //Up left loopy
-        while(startPosition.getColumn()-x >= 1 && startPosition.getRow() + x <= 8){
-            //if emptx
-            ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow() + x, startPosition.getColumn() - x));
-            if(piece == null) {
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + x, startPosition.getColumn() - x), null));
-            }
-            // if I can take
-            else if(piece.getTeamColor() != color){
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + x, startPosition.getColumn() - x), null));
-                break;
-            }
-            else{
-                break;
-            }
-            x++;
+        t = true;
+        for(int x = -1; x >= -8 && t; x--){
+            t = RookMoves.getMovesHelper(board, startPosition, 0, x, moves, color);
         }
-        x = 1;
-        int y = 1;
-        // loop through positive x
-        while(startPosition.getRow()+x <= 8){
-            //if empty
-            ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow()+x, startPosition.getColumn()));
-            if(piece == null) {
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + x, startPosition.getColumn()), null));
-            }
-            // if I can take
-            else if(piece.getTeamColor() != color){
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() + x, startPosition.getColumn()), null));
-                break;
-            }
-            else{
-                break;
-            }
-            x++;
+
+        t = true;
+        for(int x = 1; x <= 8 && t; x++){
+            t = RookMoves.getMovesHelper(board, startPosition, x, x, moves, color);
         }
-        x = 1;
-        //Negative x loopy
-        while(startPosition.getRow()-x >= 1){
-            //if empty
-            ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow()-x, startPosition.getColumn()));
-            if(piece == null) {
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() - x, startPosition.getColumn()), null));
-            }
-            // if I can take
-            else if(piece.getTeamColor() != color){
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow() - x, startPosition.getColumn()), null));
-                break;
-            }
-            else{
-                break;
-            }
-            x++;
+        t = true;
+        for(int x = -1; x >= -8 && t; x--){
+            t = RookMoves.getMovesHelper(board, startPosition, x, x, moves, color);
         }
-        //Positive y loopy
-        while(startPosition.getColumn()+y <= 8){
-            //if empty
-            ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow(), startPosition.getColumn()+y));
-            if(piece == null) {
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow(), startPosition.getColumn() + y), null));
-            }
-            // if I can take
-            else if(piece.getTeamColor() != color){
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow(), startPosition.getColumn() + y), null));
-                break;
-            }
-            else{
-                break;
-            }
-            y++;
+        t = true;
+        for(int x = 1; x <= 8 && t; x++){
+            t = RookMoves.getMovesHelper(board, startPosition, -x, x, moves, color);
         }
-        y = 1;
-        //Negative y loopy
-        while(startPosition.getColumn()-y >= 1){
-            //if empty
-            ChessPiece piece = board.getPiece(new ChessPosition(startPosition.getRow(), startPosition.getColumn()-y));
-            if(piece == null) {
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow(), startPosition.getColumn() - y), null));
-            }
-            // if I can take
-            else if(piece.getTeamColor() != color){
-                moves.add(new ChessMove(startPosition, new ChessPosition(startPosition.getRow(), startPosition.getColumn() - y), null));
-                break;
-            }
-            else{
-                break;
-            }
-            y++;
+        t = true;
+        for(int x = -1; x >= -8 && t; x--){
+            t = RookMoves.getMovesHelper(board, startPosition, -x, x, moves, color);
         }
 
         return moves;
