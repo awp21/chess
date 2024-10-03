@@ -17,6 +17,10 @@ public class ChessBoard {
         
     }
 
+    public void boardIsThis(ChessBoard board){
+        squares = board.squares;
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
