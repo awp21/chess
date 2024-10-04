@@ -5,42 +5,41 @@ import java.util.Collection;
 
 public class QueenMoves {
     public static Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition startPosition, ChessGame.TeamColor color) {
-        ArrayList<ChessMove> moves = new ArrayList<>();
-
+        Collection<ChessMove> moves = new ArrayList<>();
         boolean t = true;
+        //rook
         for(int x = 1; x <= 8 && t; x++){
-            t = RookMoves.getMovesHelper(board, startPosition, x, 0, moves, color);
+            t = ChessPiece.getMovesHelper(board,startPosition,x,0,color, moves);
         }
         t = true;
         for(int x = -1; x >= -8 && t; x--){
-            t = RookMoves.getMovesHelper(board, startPosition, x, 0, moves, color);
+            t = ChessPiece.getMovesHelper(board,startPosition,x,0,color, moves);
         }
         t = true;
         for(int x = 1; x <= 8 && t; x++){
-            t = RookMoves.getMovesHelper(board, startPosition, 0, x, moves, color);
+            t = ChessPiece.getMovesHelper(board,startPosition,0,x,color, moves);
         }
         t = true;
         for(int x = -1; x >= -8 && t; x--){
-            t = RookMoves.getMovesHelper(board, startPosition, 0, x, moves, color);
+            t = ChessPiece.getMovesHelper(board,startPosition,0,x,color, moves);
         }
-
+        //Bishop
         t = true;
         for(int x = 1; x <= 8 && t; x++){
-            t = RookMoves.getMovesHelper(board, startPosition, x, x, moves, color);
+            t = ChessPiece.getMovesHelper(board,startPosition,x,x,color, moves);
         }
         t = true;
         for(int x = -1; x >= -8 && t; x--){
-            t = RookMoves.getMovesHelper(board, startPosition, x, x, moves, color);
+            t = ChessPiece.getMovesHelper(board,startPosition,x,x,color, moves);
         }
         t = true;
         for(int x = 1; x <= 8 && t; x++){
-            t = RookMoves.getMovesHelper(board, startPosition, -x, x, moves, color);
+            t = ChessPiece.getMovesHelper(board,startPosition,-x,x,color, moves);
         }
         t = true;
         for(int x = -1; x >= -8 && t; x--){
-            t = RookMoves.getMovesHelper(board, startPosition, -x, x, moves, color);
+            t = ChessPiece.getMovesHelper(board,startPosition,-x,x,color, moves);
         }
-
         return moves;
     }
 }
