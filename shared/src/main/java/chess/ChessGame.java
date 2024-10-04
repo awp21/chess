@@ -55,15 +55,15 @@ public class ChessGame {
         Collection<ChessMove> validM = new ArrayList<>();
         Collection<ChessMove> posMoves = board.getPiece(startPosition).pieceMoves(board,startPosition);
         ChessPiece piece = board.getPiece(startPosition);
-        ChessBoard posBoard = board;
+
         for(ChessMove move : posMoves){
+            ChessBoard posBoard = new ChessBoard(board);
             posBoard.addPiece(move.getEndPosition(),piece);
             posBoard.removePiece(startPosition);
             boolean checkCheck = isinCheckHelper(posBoard,piece.getTeamColor());
             if(!checkCheck){
                 validM.add(move);
             }
-            posBoard.boardIsThis(board);
         }
         return validM;
     }
@@ -79,15 +79,18 @@ public class ChessGame {
 
         //assuming always valid
         ChessPosition start = move.getStartPosition();
-//        Collection<ChessMove> testThese = validMoves(start);
-//        if(!testThese.contains(move)){
-//            throw new InvalidMoveException("Invalid Move");
-//        }
         ChessPosition end = move.getEndPosition();
         ChessPiece piece = board.getPiece(start);
         if(piece == null){
             throw new InvalidMoveException("Ain't no piece there");
         }
+
+        Collection<ChessMove> testThese = validMoves(start);
+        if(!testThese.contains(move)){
+            throw new InvalidMoveException("Invalid Move");
+        }
+
+
 
         if(piece.getTeamColor() != TeamTurn){
             throw new InvalidMoveException("Not yo turn");
@@ -125,7 +128,30 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if(isInCheck(teamColor)){
+            if(!validMovesExist(teamColor)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean validMovesExist(TeamColor teamColor){
+        Collection<ChessMove> validM = new ArrayList<>();
+        for(int r = 1; r<=8; r++){
+            for(int c = 1; c<=8; c++){
+                ChessPosition pos = new ChessPosition(r,c);
+                ChessPiece piece = board.getPiece(pos);
+                if(piece != null && piece.getTeamColor() == teamColor){
+                    validM = validMoves(pos);
+                    if(!validM.isEmpty()){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -136,7 +162,12 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if(!isInCheck(teamColor)){
+            if(!validMovesExist(teamColor)){
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

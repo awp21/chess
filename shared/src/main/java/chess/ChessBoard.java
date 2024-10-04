@@ -17,6 +17,16 @@ public class ChessBoard {
         
     }
 
+    public ChessBoard(ChessBoard board) {
+        squares = new ChessPiece[8][8];
+        for(int r = 1; r<=8; r++){
+            for(int c = 1; c<=8; c++){
+                ChessPosition pos = new ChessPosition(r,c);
+                squares[r-1][c-1] = board.getPiece(pos);
+            }
+        }
+    }
+
     public void boardIsThis(ChessBoard board){
         squares = board.squares;
     }
