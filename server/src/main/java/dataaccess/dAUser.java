@@ -2,11 +2,18 @@ package dataaccess;
 
 import model.UserData;
 
-public class dAUser {
-    public UserData createUser(UserData u){
-        return u;
+public class dAUser implements UserDAO{
+    @Override
+    public void create(UserData u){
+        return;
     }
-    public UserData getUser(UserData u){
-        return u;
+    @Override
+    public UserData get(String username){
+        return null;
+    }
+
+    @Override
+    public void clear() throws DataAccessException {
+
     }
 }

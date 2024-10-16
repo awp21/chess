@@ -32,6 +32,7 @@ public class Server {
     private String createUser(Request req, Response res){
         Gson g = new Gson();
         UserData regUser=g.fromJson(req.body(), UserData.class);
+
         UserData user = s.register(regUser);
         res.status(202);
 
