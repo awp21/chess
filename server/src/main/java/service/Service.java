@@ -17,11 +17,12 @@ public class Service {
     }
 
 
-    public AuthData register(UserData newUser){
+    public AuthData register(UserData newUser) throws ServiceException {
         try {
             if(null!=userdao.get(newUser.username())){
-                throw new RuntimeException("ERROR: User already exists");
+                throw new ServiceException("Error: username already taken");
             }
+
             userdao.create(newUser);
             AuthData auth = authdao.create(newUser.username());
             return auth;

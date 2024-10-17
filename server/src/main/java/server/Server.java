@@ -3,8 +3,10 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
+import model.ErrorModel;
 import model.UserData;
 import service.Service;
+import service.ServiceException;
 import spark.*;
 
 public class Server {
@@ -24,9 +26,9 @@ public class Server {
         // Register your endpoints and handle exceptions here.
 
         Spark.post("/user", (req, res) -> createUser(req,res));
+
 //        Spark.delete("/db", (req, res)-> "{}");
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
+        //This line initializes the server and can be removed once you have a functioning endpoint
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -39,10 +41,17 @@ public class Server {
 
     private String createUser(Request req, Response res){
         Gson g = new Gson();
-        UserData regUser=g.fromJson(req.body(), UserData.class);
-        AuthData auth = s.register(regUser);
+        UserData regUser = g.fromJson(req.body(), UserData.class);
+        AuthData auth;
+        try{
+            auth = s.register(regUser);
+        }catch (ServiceException e){
+            res.status(403);
+            ErrorModel error = new ErrorModel(e.getMessage());
+            return g.toJson(error);
+        }
+        //make a item missing exception.
         res.status(200);
-        res.body(g.toJson(auth));
-        return res.body();
+        return g.toJson(auth);
     }
 }
