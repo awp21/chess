@@ -8,6 +8,7 @@ import model.UserData;
 import service.AlreadyTakenException;
 import service.BadRequestException;
 import service.Service;
+import service.UnauthorizedException;
 import spark.*;
 
 public class Server {
@@ -48,8 +49,10 @@ public class Server {
         AuthData auth;
         try {
             auth = s.loginUser(logUser);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+        }catch (UnauthorizedException |BadRequestException e) {
+            res.status(401);
+            ErrorModel error = new ErrorModel(e.getMessage());
+            return g.toJson(error);
         }
         return g.toJson(auth);
     }

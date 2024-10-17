@@ -8,7 +8,7 @@ import java.util.Set;
 public class dAAuth implements AuthDAO{
 
     @Override
-    public AuthData create(String username) throws DataAccessException {
+    public AuthData create(String username) {
         //add generator here
         AuthData auth = new AuthData("100",username);
         authDataBase.add(auth);
@@ -16,7 +16,7 @@ public class dAAuth implements AuthDAO{
     }
 
     @Override
-    public AuthData get(String username) throws DataAccessException {
+    public AuthData get(String username){
         return null;
     }
 

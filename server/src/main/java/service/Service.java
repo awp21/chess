@@ -20,8 +20,19 @@ public class Service {
         gamedao.clear();
     }
 
-    public AuthData loginUser(UserData user) throws DataAccessException {
-        return authdao.create(user.username());
+    public AuthData loginUser(UserData user) throws UnauthorizedException, BadRequestException {
+        try {
+            if(null==userdao.get(user.username())){
+                throw new BadRequestException("Error: user does not exist");
+            }
+            if(!user.password().equals(userdao.get(user.username()).password())){
+                throw new UnauthorizedException("Error: incorrect password");
+            }
+
+            return authdao.create(user.username());
+        }catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public AuthData register(UserData newUser) throws AlreadyTakenException, BadRequestException{
