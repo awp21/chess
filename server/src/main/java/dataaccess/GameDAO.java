@@ -7,4 +7,5 @@ public interface GameDAO {
     GameData createGame();
     GameData getGame();
     GameData updateGame();
+    void clear();
 }

@@ -22,7 +22,7 @@ public class dAAuth implements AuthDAO{
 
     @Override
     public void clear() throws DataAccessException {
-
+        authDataBase = new HashSet<>();
     }
 
     private Set<AuthData> authDataBase = new HashSet<>();

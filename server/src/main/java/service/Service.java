@@ -1,26 +1,37 @@
 package service;
 
 
-import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
-import dataaccess.UserDAO;
-import dataaccess.dAAuth;
+import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 
 public class Service {
     private UserDAO userdao;
-    private AuthDAO authdao = new dAAuth();;
+    private AuthDAO authdao = new dAAuth();
+    private GameDAO gamedao = new dAGame();
 
     public Service(UserDAO userdao) {
         this.userdao = userdao;
     }
 
+    public void deleteData() throws DataAccessException {
+        userdao.clear();
+        authdao.clear();
+        gamedao.clear();
+    }
 
-    public AuthData register(UserData newUser) throws ServiceException {
+    public AuthData loginUser(UserData user) throws DataAccessException {
+        return authdao.create(user.username());
+    }
+
+    public AuthData register(UserData newUser) throws AlreadyTakenException, BadRequestException{
         try {
+            if(newUser.username() == null || newUser.email() == null || newUser.password() == null){
+                throw new BadRequestException("Error: bad request");
+            }
+
             if(null!=userdao.get(newUser.username())){
-                throw new ServiceException("Error: username already taken");
+                throw new AlreadyTakenException("Error: already taken");
             }
 
             userdao.create(newUser);

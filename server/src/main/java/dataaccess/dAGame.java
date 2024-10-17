@@ -1,6 +1,10 @@
 package dataaccess;
 
 import model.GameData;
+import model.UserData;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class dAGame implements GameDAO{
 
@@ -23,4 +27,11 @@ public class dAGame implements GameDAO{
     public GameData updateGame() {
         return null;
     }
+
+    @Override
+    public void clear() {
+        gameDataBase = new HashSet<>();
+    }
+
+    private Set<GameData> gameDataBase = new HashSet<>();
 }
