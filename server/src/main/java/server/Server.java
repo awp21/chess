@@ -1,8 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.UserDAO;
-import dataaccess.dAUser;
+import dataaccess.*;
 import model.UserData;
 import service.Service;
 import spark.*;
@@ -10,8 +9,9 @@ import spark.*;
 public class Server {
 
     private UserDAO userdao = new dAUser();
-//    private AuthDAO authdao = new dAAuth();
-//    private GameDAO gamedoa = new dAGame();
+    private AuthDAO authdao = new dAAuth();
+    private GameDAO gamedoa = new dAGame();
+//    maybe I don't need these?
     private Service s = new Service(userdao);
 
 
@@ -23,6 +23,7 @@ public class Server {
         // Register your endpoints and handle exceptions here.
 
         Spark.post("/user", (req, res) -> createUser(req,res));
+//        Spark.delete("/db", (req, res)-> "{}");
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -38,15 +39,9 @@ public class Server {
     private String createUser(Request req, Response res){
         Gson g = new Gson();
         UserData regUser=g.fromJson(req.body(), UserData.class);
-
         UserData user = s.register(regUser);
         res.status(202);
-
         res.body(g.toJson(user));
         return res.body();
     }
-
-
-
-
 }

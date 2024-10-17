@@ -2,17 +2,25 @@ package dataaccess;
 
 import model.GameData;
 
-public class dAGame {
-    public GameData createGame(GameData g){
-        return g;
+public class dAGame implements GameDAO{
+
+    @Override
+    public GameData listAllGames() {
+        return null;
     }
-    public GameData listGames(GameData g){
-        return g;
+
+    @Override
+    public GameData createGame() {
+        return null;
     }
-    public GameData getGame(GameData g){
-        return g;
+
+    @Override
+    public GameData getGame() {
+        return null;
     }
-    public GameData updateGame(GameData g){
-        return g;
+
+    @Override
+    public GameData updateGame() {
+        return null;
     }
 }

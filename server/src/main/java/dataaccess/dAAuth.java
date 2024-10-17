@@ -1,15 +1,32 @@
 package dataaccess;
 
 import model.AuthData;
+import model.UserData;
 
-public class dAAuth {
-    public AuthData createAuth(AuthData a){
-        return a;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+public class dAAuth implements AuthDAO{
+
+    @Override
+    public void create(String username) throws DataAccessException {
+        //add generator here
+        AuthData auth = new AuthData("100",username);
+        authDataBase.add(auth);
     }
-    public AuthData getAuth(AuthData a){
-        return a;
+
+    @Override
+    public AuthData get(String username) throws DataAccessException {
+        return null;
     }
-    public AuthData deleteAuth(AuthData a){
-        return a;
+
+    @Override
+    public void clear() throws DataAccessException {
+
     }
+
+    private Set<AuthData> authDataBase = new HashSet<>();
+
 }

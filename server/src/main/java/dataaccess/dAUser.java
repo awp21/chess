@@ -22,7 +22,7 @@ public class dAUser implements UserDAO{
 
     @Override
     public void clear() throws DataAccessException {
-
+        userDataBase = new HashSet<>();
     }
 
     private Set<UserData> userDataBase = new HashSet<>();
