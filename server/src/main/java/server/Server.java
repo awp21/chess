@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import model.AuthData;
 import model.UserData;
 import service.Service;
 import spark.*;
@@ -39,9 +40,9 @@ public class Server {
     private String createUser(Request req, Response res){
         Gson g = new Gson();
         UserData regUser=g.fromJson(req.body(), UserData.class);
-        UserData user = s.register(regUser);
-        res.status(202);
-        res.body(g.toJson(user));
+        AuthData auth = s.register(regUser);
+        res.status(200);
+        res.body(g.toJson(auth));
         return res.body();
     }
 }

@@ -16,15 +16,15 @@ public class Service {
         this.userdao = userdao;
     }
 
-    public UserData register(UserData newUser){
+
+    public AuthData register(UserData newUser){
         try {
             if(null!=userdao.get(newUser.username())){
                 throw new RuntimeException("ERROR: User already exists");
             }
             userdao.create(newUser);
-            authdao.create(newUser.username());
-
-            return newUser;
+            AuthData auth = authdao.create(newUser.username());
+            return auth;
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
