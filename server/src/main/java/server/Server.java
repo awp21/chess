@@ -29,6 +29,7 @@ public class Server {
         Spark.delete("/db", (req,res) -> deleteAll(res));
         Spark.post("/user", (req, res) -> createUser(req,res));
         Spark.post("/session", (req, res) -> login(req,res));
+        Spark.delete("/session", (req, res) -> logout(req,res));
 
 //        Spark.delete("/db", (req, res)-> "{}");
         //This line initializes the server and can be removed once you have a functioning endpoint
@@ -40,6 +41,20 @@ public class Server {
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
+    }
+
+    private String logout(Request req, Response res){
+        Gson g = new Gson();
+        String authToken = req.headers("authorization");
+        try{
+            s.logoutUser(authToken);
+            res.status(200);
+            return g.toJson(null);
+        }catch (UnauthorizedException e){
+            res.status(401);
+            ErrorModel error = new ErrorModel(e.getMessage());
+            return g.toJson(error);
+        }
     }
 
     private String login(Request req, Response res){

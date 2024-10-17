@@ -4,6 +4,7 @@ package service;
 import dataaccess.*;
 import model.AuthData;
 import model.UserData;
+import model.GameData;
 
 public class Service {
     private UserDAO userdao;
@@ -18,6 +19,17 @@ public class Service {
         userdao.clear();
         authdao.clear();
         gamedao.clear();
+    }
+
+    public void logoutUser(String authToken)throws UnauthorizedException{
+        try{
+            if(!authdao.deleteAuthToken(authToken)){
+                throw new UnauthorizedException("Error: unauthorized");
+            }
+
+        }catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public AuthData loginUser(UserData user) throws UnauthorizedException, BadRequestException {
