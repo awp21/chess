@@ -35,6 +35,9 @@ public class Server {
         //Also, it says "Expected Json Got [] when empty???"
         Spark.put("/game", (req,res)->joinGame(req,res));
 
+        //NOTES FOR TA!!!
+        //MY TESTS DON'T PASS BC I DON'T KNOW HOW TO RETURN {} AT THE ENDS
+        //ALSO, RETURNING THE COLLECITON IS WRONG TOO
 
         //This line initializes the server and can be removed once you have a functioning endpoint
 
@@ -78,6 +81,7 @@ public class Server {
             Set<GameData> allGames = s.listGames(authToken);
             res.status(200);
             return g.toJson(allGames);
+            //HERE IS THE PROBLEM! WHAT DO I USE TO RETURN ALL GAMES?
         }catch (UnauthorizedException e){
             res.status(401);
             ErrorModel error = new ErrorModel(e.getMessage());

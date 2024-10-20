@@ -6,6 +6,7 @@ import model.GameData;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Random;
 
 public class dAGame implements GameDAO{
 
@@ -17,7 +18,10 @@ public class dAGame implements GameDAO{
     @Override
     public GameData createGame(String gameName) {
         ChessGame game = new ChessGame();
-        GameData gameAdded = new GameData(123,null,null,gameName,game);
+        //Should gameIDs be random?
+        Random rand = new Random();
+        int gameID = rand.nextInt(1000);
+        GameData gameAdded = new GameData(gameID,null,null,gameName,game);
         gameDataBase.add(gameAdded);
         return gameAdded;
     }
@@ -35,7 +39,7 @@ public class dAGame implements GameDAO{
     }
 
     @Override
-    public GameData updateGame(AddPlayer addPlayer) {
+    public GameData updateGame(AddPlayer addPlayer){
         GameData game = getGame(addPlayer.gameID());
         if(addPlayer.playerColor().equals("WHITE")){
             game = new GameData(addPlayer.gameID(), addPlayer.nameOfUser(), game.blackUsername(), game.gameName(), game.game());
@@ -46,10 +50,10 @@ public class dAGame implements GameDAO{
     }
 
     @Override
-    public boolean spotEmpty(String color, int gameId) throws DataAccessException {
+    public boolean spotEmpty(String color, int gameId){
         GameData game = getGame(gameId);
         String ret = (color.equals("WHITE")) ? game.whiteUsername(): game.blackUsername();
-        return ret != null;
+        return ret == null;
     }
 
     @Override

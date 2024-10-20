@@ -5,6 +5,7 @@ import model.UserData;
 import service.UnauthorizedException;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 public class dAAuth implements AuthDAO{
@@ -12,7 +13,9 @@ public class dAAuth implements AuthDAO{
     @Override
     public AuthData create(String username) {
         //add generator here
-        AuthData auth = new AuthData("100",username);
+        Random rand = new Random();
+        int newAuthNumber = rand.nextInt(1000);
+        AuthData auth = new AuthData(Integer.toString(newAuthNumber),username);
         authDataBase.add(auth);
         return auth;
     }

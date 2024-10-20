@@ -28,10 +28,9 @@ public class Service {
     public void addPlayertoGame(String authToken, AddPlayer player)throws UnauthorizedException, BadRequestException,AlreadyTaken{
         try{
             if(authdao.get(authToken)!=null){
-                if(gamedao.getGame(player.gameID())!=null){
+                if(gamedao.getGame(player.gameID())!=null && player.playerColor() != null){
                     if(gamedao.spotEmpty(player.playerColor(),player.gameID())){
                         gamedao.updateGame(player);
-                        return;
                     }else{
                         throw new AlreadyTaken("Error: already taken");
                     }
@@ -105,8 +104,7 @@ public class Service {
             }
 
             userdao.create(newUser);
-            AuthData auth = authdao.create(newUser.username());
-            return auth;
+            return authdao.create(newUser.username());
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
