@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
+import model.UserData;
 import service.UnauthorizedException;
 
 import java.util.HashSet;
@@ -17,7 +18,12 @@ public class dAAuth implements AuthDAO{
     }
 
     @Override
-    public AuthData get(String username){
+    public AuthData get(String authToken){
+        for(AuthData auth: authDataBase){
+            if(auth.authToken().equals(authToken)){
+                return auth;
+            }
+        }
         return null;
     }
 

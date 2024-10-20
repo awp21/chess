@@ -1,7 +1,7 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
-import model.UserData;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,13 +9,16 @@ import java.util.Set;
 public class dAGame implements GameDAO{
 
     @Override
-    public GameData listAllGames() {
-        return null;
+    public Set<GameData> listAllGames() {
+        return gameDataBase;
     }
 
     @Override
-    public GameData createGame() {
-        return null;
+    public GameData createGame(String gameName) {
+        ChessGame game = new ChessGame();
+        GameData gameAdded = new GameData(123,null,null,gameName,game);
+        gameDataBase.add(gameAdded);
+        return gameAdded;
     }
 
     @Override

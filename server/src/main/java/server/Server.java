@@ -2,14 +2,15 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
-import model.AuthData;
-import model.ErrorModel;
-import model.UserData;
+import model.*;
 import service.AlreadyTakenException;
 import service.BadRequestException;
 import service.Service;
 import service.UnauthorizedException;
 import spark.*;
+
+import java.util.Collection;
+import java.util.Set;
 
 public class Server {
 
@@ -30,8 +31,12 @@ public class Server {
         Spark.post("/user", (req, res) -> createUser(req,res));
         Spark.post("/session", (req, res) -> login(req,res));
         Spark.delete("/session", (req, res) -> logout(req,res));
+        Spark.post("/game", (req,res)->createGame(req,res));
+        Spark.get("/game", (req,res)->listGames(req,res));
+        //I don't know if ListGames works until I do JoinGame
+        //Also, it says "Expected Json Got [] when empty???"
 
-//        Spark.delete("/db", (req, res)-> "{}");
+
         //This line initializes the server and can be removed once you have a functioning endpoint
 
         Spark.awaitInitialization();
@@ -41,6 +46,36 @@ public class Server {
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
+    }
+
+    private String listGames(Request req, Response res){
+        Gson g = new Gson();
+        String authToken = req.headers("authorization");
+        try{
+            Set<GameData> allGames = s.listGames(authToken);
+            res.status(200);
+            return g.toJson(allGames);
+        }catch (UnauthorizedException e){
+            res.status(401);
+            ErrorModel error = new ErrorModel(e.getMessage());
+            return g.toJson(error);
+        }
+    }
+
+    private String createGame(Request req, Response res){
+        Gson g = new Gson();
+        String authToken = req.headers("authorization");
+        try{
+            String name = g.fromJson(req.body(),GameData.class).gameName();
+            GameData retGame;
+            retGame=s.makeGame(authToken,name);
+            res.status(200);
+            return g.toJson(new GameIDOnly(retGame.gameID()));
+        }catch (UnauthorizedException e){
+            res.status(401);
+            ErrorModel error = new ErrorModel(e.getMessage());
+            return g.toJson(error);
+        }
     }
 
     private String logout(Request req, Response res){
@@ -100,7 +135,6 @@ public class Server {
             ErrorModel error = new ErrorModel(e.getMessage());
             return g.toJson(error);
         }
-        //make a item missing exception.
         res.status(200);
         return g.toJson(auth);
     }

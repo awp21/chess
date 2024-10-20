@@ -6,6 +6,9 @@ import model.AuthData;
 import model.UserData;
 import model.GameData;
 
+import java.util.Collection;
+import java.util.Set;
+
 public class Service {
     private UserDAO userdao;
     private AuthDAO authdao = new dAAuth();
@@ -19,6 +22,28 @@ public class Service {
         userdao.clear();
         authdao.clear();
         gamedao.clear();
+    }
+
+    public Set<GameData> listGames(String auth)throws UnauthorizedException{
+        try{
+            if(authdao.get(auth)!=null){
+                return gamedao.listAllGames();
+            }
+            throw new UnauthorizedException("Error: unauthorized");
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public GameData makeGame(String authToken,String gameName)throws UnauthorizedException{
+        try{
+            if(authdao.get(authToken)!=null){
+                return gamedao.createGame(gameName);
+            }
+            throw new UnauthorizedException("Error: unauthorized");
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void logoutUser(String authToken)throws UnauthorizedException{
