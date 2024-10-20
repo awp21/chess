@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import model.AddPlayer;
 import model.GameData;
 
 import java.util.HashSet;
@@ -21,14 +22,34 @@ public class dAGame implements GameDAO{
         return gameAdded;
     }
 
+
+
     @Override
-    public GameData getGame() {
+    public GameData getGame(int gameId) {
+        for(GameData game: gameDataBase){
+            if(game.gameID() == gameId){
+                return game;
+            }
+        }
         return null;
     }
 
     @Override
-    public GameData updateGame() {
-        return null;
+    public GameData updateGame(AddPlayer addPlayer) {
+        GameData game = getGame(addPlayer.gameID());
+        if(addPlayer.playerColor().equals("WHITE")){
+            game = new GameData(addPlayer.gameID(), addPlayer.nameOfUser(), game.blackUsername(), game.gameName(), game.game());
+        }else{
+            game = new GameData(addPlayer.gameID(), game.whiteUsername(), addPlayer.nameOfUser(), game.gameName(), game.game());
+        }
+        return game;
+    }
+
+    @Override
+    public boolean spotEmpty(String color, int gameId) throws DataAccessException {
+        GameData game = getGame(gameId);
+        String ret = (color.equals("WHITE")) ? game.whiteUsername(): game.blackUsername();
+        return ret != null;
     }
 
     @Override

@@ -2,11 +2,11 @@ package service;
 
 
 import dataaccess.*;
+import model.AddPlayer;
 import model.AuthData;
 import model.UserData;
 import model.GameData;
 
-import java.util.Collection;
 import java.util.Set;
 
 public class Service {
@@ -18,10 +18,32 @@ public class Service {
         this.userdao = userdao;
     }
 
+
     public void deleteData() throws DataAccessException {
         userdao.clear();
         authdao.clear();
         gamedao.clear();
+    }
+
+    public void addPlayertoGame(String authToken, AddPlayer player)throws UnauthorizedException, BadRequestException,AlreadyTaken{
+        try{
+            if(authdao.get(authToken)!=null){
+                if(gamedao.getGame(player.gameID())!=null){
+                    if(gamedao.spotEmpty(player.playerColor(),player.gameID())){
+                        gamedao.updateGame(player);
+                        return;
+                    }else{
+                        throw new AlreadyTaken("Error: already taken");
+                    }
+                }else{
+                    throw new BadRequestException("Error: game does not exist");
+                }
+            }else{
+                throw new UnauthorizedException("Error: unauthorized");
+            }
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Set<GameData> listGames(String auth)throws UnauthorizedException{
