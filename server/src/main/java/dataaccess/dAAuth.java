@@ -21,7 +21,7 @@ public class dAAuth implements AuthDAO{
     }
 
     @Override
-    public AuthData get(String authToken){
+    public AuthData get(String authToken) {
         for(AuthData auth: authDataBase){
             if(auth.authToken().equals(authToken)){
                 return auth;
@@ -44,6 +44,11 @@ public class dAAuth implements AuthDAO{
             }
         }
         return false;
+    }
+
+    @Override
+    public Set<AuthData> getDataBase() throws DataAccessException {
+        return authDataBase;
     }
 
     private Set<AuthData> authDataBase = new HashSet<>();

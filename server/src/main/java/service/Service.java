@@ -19,10 +19,28 @@ public class Service {
     }
 
 
-    public void deleteData() throws DataAccessException {
-        userdao.clear();
-        authdao.clear();
-        gamedao.clear();
+    public void deleteData(){
+        try {
+            userdao.clear();
+            authdao.clear();
+            gamedao.clear();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getUsernameFromAuthToken(String authToken)throws UnauthorizedException{
+        try{
+            if(authToken != null) {
+                if (authdao.get(authToken) != null) {
+                    return authdao.get(authToken).username();
+                }
+            }
+            throw new UnauthorizedException("Error: unauthorized");
+        }catch (DataAccessException e){
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void addPlayertoGame(String authToken, AddPlayer player)throws UnauthorizedException, BadRequestException,AlreadyTaken{

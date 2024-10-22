@@ -41,11 +41,14 @@ public class dAGame implements GameDAO{
     @Override
     public GameData updateGame(AddPlayer addPlayer){
         GameData game = getGame(addPlayer.gameID());
+        gameDataBase.remove(game);
         if(addPlayer.playerColor().equals("WHITE")){
             game = new GameData(addPlayer.gameID(), addPlayer.nameOfUser(), game.blackUsername(), game.gameName(), game.game());
         }else{
             game = new GameData(addPlayer.gameID(), game.whiteUsername(), addPlayer.nameOfUser(), game.gameName(), game.game());
         }
+
+        gameDataBase.add(game);
         return game;
     }
 

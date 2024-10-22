@@ -12,9 +12,6 @@ import java.util.Set;
 public class Server {
 
     private UserDAO userdao = new dAUser();
-    private AuthDAO authdao = new dAAuth();
-    private GameDAO gamedao = new dAGame();
-    private String nameOfUser;
 //    maybe I don't need these?
     private Service s = new Service(userdao);
 
@@ -54,11 +51,13 @@ public class Server {
         Gson g = new Gson();
         String authToken = req.headers("authorization");
         AddPlayer player = g.fromJson(req.body(), AddPlayer.class);
-        player = new AddPlayer(player.playerColor(), player.gameID(), nameOfUser);
+        String username;
         try {
+            username = s.getUsernameFromAuthToken(authToken);
+            player = new AddPlayer(player.playerColor(), player.gameID(), username);
             s.addPlayertoGame(authToken,player);
             res.status(200);
-            return g.toJson(null);
+            return "{}";
         }catch (UnauthorizedException e){
             res.status(401);
             ErrorModel error = new ErrorModel(e.getMessage());
@@ -80,7 +79,8 @@ public class Server {
         try{
             Set<GameData> allGames = s.listGames(authToken);
             res.status(200);
-            return g.toJson(allGames);
+            listGamesResult listgamesresult = new listGamesResult(allGames);
+            return g.toJson(listgamesresult);
             //HERE IS THE PROBLEM! WHAT DO I USE TO RETURN ALL GAMES?
         }catch (UnauthorizedException e){
             res.status(401);
@@ -111,7 +111,7 @@ public class Server {
         try{
             s.logoutUser(authToken);
             res.status(200);
-            return g.toJson(null);
+            return "{}";
         }catch (UnauthorizedException e){
             res.status(401);
             ErrorModel error = new ErrorModel(e.getMessage());
@@ -137,14 +137,10 @@ public class Server {
 
 
     private String deleteAll(Response res){
-        try{
-            s.deleteData();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+        s.deleteData();
         Gson g = new Gson();
         res.status(200);
-        return g.toJson(null);
+        return "{}";
     }
 
     private String createUser(Request req, Response res){
@@ -153,7 +149,6 @@ public class Server {
         AuthData auth;
         try{
             auth = s.register(regUser);
-            nameOfUser = regUser.username();
         }catch (AlreadyTakenException e){
             res.status(403);
             ErrorModel error = new ErrorModel(e.getMessage());

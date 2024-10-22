@@ -25,6 +25,11 @@ public class dAUser implements UserDAO{
         userDataBase = new HashSet<>();
     }
 
+    @Override
+    public Set<UserData> getDataBase(){
+        return userDataBase;
+    }
+
     private Set<UserData> userDataBase = new HashSet<>();
 
 
