@@ -1,15 +1,13 @@
 package service;
 
-import chess.ChessGame;
+
 import dataaccess.*;
+import model.AddPlayer;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import passoff.model.*;
-import server.Server;
 
-import java.net.HttpURLConnection;
 import java.util.*;
 
 public class serviceTests {
@@ -31,6 +29,45 @@ public class serviceTests {
     }
 
 
+    @Test
+    public void addTwoPlayersToGame(){
+        try{
+            UserData player2 = new UserData("Luigi","mario","nintendo");
+            AuthData luigiAuth = service.register(player2);
+            AuthData auth = service.register(alreadyMadeUser);
+            GameData gameToAdd = service.makeGame(auth.authToken(),"gameTest");
+            AddPlayer player = new AddPlayer("WHITE", gameToAdd.gameID(), alreadyMadeUser.username());
+            AddPlayer luigiPlays = new AddPlayer("BLACK", gameToAdd.gameID(), player2.username());
+            service.addPlayertoGame(auth.authToken(),player);
+            service.addPlayertoGame(luigiAuth.authToken(), luigiPlays);
+        } catch (UnauthorizedException | BadRequestException | AlreadyTakenException e) {
+            assert false : "Error in request";
+        }
+    }
+
+    @Test
+    public void listCreatedGames(){
+        try {
+            AuthData auth = service.register(alreadyMadeUser);
+            GameData game1 = service.makeGame(auth.authToken(),"game1");
+            GameData game2 = service.makeGame(auth.authToken(),"game2");
+            Set<GameData> gamesListed = service.listGames(auth.authToken());
+            assert (gamesListed.contains(game1) && gamesListed.contains(game2)) : "Games not listed";
+        } catch (AlreadyTakenException | BadRequestException | UnauthorizedException ignored) {
+        }
+    }
+
+    @Test
+    public void listNoGames(){
+        try {
+            AuthData auth = service.register(alreadyMadeUser);
+            Set<GameData> gamesListed = service.listGames(auth.authToken());
+            assert gamesListed.isEmpty() : "GameList isn't empty";
+        } catch (AlreadyTakenException | BadRequestException | UnauthorizedException e) {
+            assert false : "Error in request";
+        }
+    }
+
 
     @Test
     public void makeTest(){
@@ -49,8 +86,7 @@ public class serviceTests {
             AuthData badAuth = new AuthData("hehe","gottem");
             GameData gdata = service.makeGame(badAuth.authToken(), "badGame");
             Assertions.assertInstanceOf(GameData.class,gdata,"Game data was created without authorization");
-        } catch (UnauthorizedException e) {
-            return;
+        } catch (UnauthorizedException ignored) {
         }
     }
 
@@ -70,10 +106,9 @@ public class serviceTests {
     public void registerBadRequestTest(){
         UserData jimbo = new UserData(null,"password","Jimbo@byu.edu");
         try{
-            AuthData authD = service.register(jimbo);
+            service.register(jimbo);
             assert false : "Did not catch bad username";
-        } catch (BadRequestException | AlreadyTakenException e) {
-            return;
+        } catch (BadRequestException | AlreadyTakenException ignored) {
         }
     }
 
@@ -84,8 +119,7 @@ public class serviceTests {
             service.logoutUser(authD.authToken());
             service.loginUser(alreadyMadeUser);
             assert auth.getDataBase().isEmpty() : "Login Failed";
-        } catch (BadRequestException | AlreadyTakenException | UnauthorizedException | DataAccessException e) {
-            return;
+        } catch (BadRequestException | AlreadyTakenException | UnauthorizedException | DataAccessException ignored) {
         }
     }
 
@@ -98,8 +132,7 @@ public class serviceTests {
             service.loginUser(falseUser);
             assert !auth.getDataBase().isEmpty() : "Created User that wasn't registered";
             //Maybe an error here???
-        } catch (BadRequestException | AlreadyTakenException | UnauthorizedException | DataAccessException e) {
-            return;
+        } catch (BadRequestException | AlreadyTakenException | UnauthorizedException | DataAccessException ignored) {
         }
     }
 
@@ -109,8 +142,7 @@ public class serviceTests {
             AuthData authD = service.register(alreadyMadeUser);
             service.logoutUser(authD.authToken());
             assert auth.getDataBase().isEmpty() : "Logout Unsuccessful";
-        } catch (BadRequestException | AlreadyTakenException | UnauthorizedException | DataAccessException e) {
-            return;
+        } catch (BadRequestException | AlreadyTakenException | UnauthorizedException | DataAccessException ignored) {
         }
     }
 
@@ -120,8 +152,7 @@ public class serviceTests {
             AuthData authD = service.register(alreadyMadeUser);
             service.logoutUser("BadAuthToken");
             assert !auth.getDataBase().isEmpty() : "Didn't catch bad authToken";
-        } catch (BadRequestException | AlreadyTakenException | UnauthorizedException | DataAccessException e) {
-            return;
+        } catch (BadRequestException | AlreadyTakenException | UnauthorizedException | DataAccessException ignored) {
         }
     }
 

@@ -66,7 +66,7 @@ public class Server {
             res.status(400);
             ErrorModel error = new ErrorModel(e.getMessage());
             return g.toJson(error);
-        } catch (AlreadyTaken e) {
+        } catch (AlreadyTakenException e) {
             res.status(403);
             ErrorModel error = new ErrorModel(e.getMessage());
             return g.toJson(error);

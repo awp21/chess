@@ -43,14 +43,14 @@ public class Service {
 
     }
 
-    public void addPlayertoGame(String authToken, AddPlayer player)throws UnauthorizedException, BadRequestException,AlreadyTaken{
+    public void addPlayertoGame(String authToken, AddPlayer player)throws UnauthorizedException, BadRequestException,AlreadyTakenException{
         try{
             if(authdao.get(authToken)!=null){
                 if(gamedao.getGame(player.gameID())!=null && player.playerColor() != null){
                     if(gamedao.spotEmpty(player.playerColor(),player.gameID())){
                         gamedao.updateGame(player);
                     }else{
-                        throw new AlreadyTaken("Error: already taken");
+                        throw new AlreadyTakenException("Error: already taken");
                     }
                 }else{
                     throw new BadRequestException("Error: game does not exist");
