@@ -28,6 +28,25 @@ public class serviceTests {
         service.deleteData();
     }
 
+    @Test
+    public void userNameFromTokenGrab(){
+        try{
+            AuthData auth = service.register(alreadyMadeUser);
+            String usernameTest = service.getUsernameFromAuthToken(auth.authToken());
+            Assertions.assertEquals(alreadyMadeUser.username(), usernameTest,"username wasn't found from authToken");
+        } catch (BadRequestException | AlreadyTakenException | UnauthorizedException ignore) {
+        }
+    }
+
+    @Test
+    public void userNameFromBadTokenGrab(){
+        try{
+            service.register(alreadyMadeUser);
+            String usernameTest = service.getUsernameFromAuthToken("12345");
+            Assertions.assertNotEquals(alreadyMadeUser.username(), usernameTest,"false authtoken gave username");
+        } catch (BadRequestException | AlreadyTakenException | UnauthorizedException ignore) {
+        }
+    }
 
     @Test
     public void addTwoPlayersToGame(){
@@ -36,11 +55,17 @@ public class serviceTests {
             AuthData luigiAuth = service.register(player2);
             AuthData auth = service.register(alreadyMadeUser);
             GameData gameToAdd = service.makeGame(auth.authToken(),"gameTest");
-            AddPlayer player = new AddPlayer("WHITE", gameToAdd.gameID(), alreadyMadeUser.username());
-            AddPlayer luigiPlays = new AddPlayer("BLACK", gameToAdd.gameID(), player2.username());
+            int id = gameToAdd.gameID();
+            AddPlayer player = new AddPlayer("WHITE", id, alreadyMadeUser.username());
+            AddPlayer luigiPlays = new AddPlayer("BLACK", id, player2.username());
+            //Addplayer has problems here
             service.addPlayertoGame(auth.authToken(),player);
             service.addPlayertoGame(luigiAuth.authToken(), luigiPlays);
-        } catch (UnauthorizedException | BadRequestException | AlreadyTakenException e) {
+            //THIS IS WHERE GAMEDAO IS WERID, FIX IT
+            GameData tester = service.gamedao.getGame(id);
+            Assertions.assertEquals(tester.whiteUsername(),alreadyMadeUser.username(),"Player 1 not added");
+            Assertions.assertEquals(tester.blackUsername(),player2.username(),"Player 2 not added");
+        } catch (UnauthorizedException | BadRequestException | AlreadyTakenException | DataAccessException e) {
             assert false : "Error in request";
         }
     }
@@ -149,7 +174,7 @@ public class serviceTests {
     @Test
     public void logoutUnAuthorizedTest(){
         try{
-            AuthData authD = service.register(alreadyMadeUser);
+            service.register(alreadyMadeUser);
             service.logoutUser("BadAuthToken");
             assert !auth.getDataBase().isEmpty() : "Didn't catch bad authToken";
         } catch (BadRequestException | AlreadyTakenException | UnauthorizedException | DataAccessException ignored) {

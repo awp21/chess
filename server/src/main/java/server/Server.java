@@ -79,7 +79,7 @@ public class Server {
         try{
             Set<GameData> allGames = s.listGames(authToken);
             res.status(200);
-            listGamesResult listgamesresult = new listGamesResult(allGames);
+            ListGamesResult listgamesresult = new ListGamesResult(allGames);
             return g.toJson(listgamesresult);
             //HERE IS THE PROBLEM! WHAT DO I USE TO RETURN ALL GAMES?
         }catch (UnauthorizedException e){

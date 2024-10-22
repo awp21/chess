@@ -12,7 +12,8 @@ import java.util.Set;
 public class Service {
     private UserDAO userdao;
     private AuthDAO authdao = new dAAuth();
-    private GameDAO gamedao = new dAGame();
+    public GameDAO gamedao = new dAGame();
+    //THIS WILL BE FIXED HEHE
 
     public Service(UserDAO userdao) {
         this.userdao = userdao;
