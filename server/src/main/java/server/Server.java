@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class Server {
 
-    private UserDAO userdao = new dAUser();
+    private UserDAO userdao = new DAUser();
 //    maybe I don't need these?
     private Service s = new Service(userdao);
 

@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Random;
 
-public class dAGame implements GameDAO{
+public class DAGame implements GameDAO{
 
     @Override
     public Set<GameData> listAllGames() {

@@ -5,7 +5,7 @@ import model.UserData;
 import java.util.HashSet;
 import java.util.Set;
 
-public class dAUser implements UserDAO{
+public class DAUser implements UserDAO{
     @Override
     public void create(UserData u){
         userDataBase.add(u);

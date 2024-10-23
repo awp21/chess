@@ -21,9 +21,9 @@ public class ServiceTests {
 
     @BeforeEach
     public void setUp(){
-        user = new dAUser();
-        auth = new dAAuth();
-        game = new dAGame();
+        user = new DAUser();
+        auth = new DAAuth();
+        game = new DAGame();
         service = new Service(user);
         service.deleteData();
     }
@@ -200,13 +200,13 @@ public class ServiceTests {
     public void testEmpty(){
         service.deleteData();
         try{
-            Set ExpectedUser = new HashSet<>();
-            Set UserResult = user.getDataBase();
-            Set AuthResult = auth.getDataBase();
-            Set GameResult = game.listAllGames();
-            Assertions.assertEquals(UserResult,ExpectedUser,"UserDataBase did not clear");
-            Assertions.assertEquals(AuthResult,ExpectedUser,"AuthDataBase did not clear");
-            Assertions.assertEquals(GameResult,ExpectedUser,"GameDataBase did not clear");
+            Set expectedUser = new HashSet<>();
+            Set userResult = user.getDataBase();
+            Set authResult = auth.getDataBase();
+            Set gameResult = game.listAllGames();
+            Assertions.assertEquals(userResult,expectedUser,"UserDataBase did not clear");
+            Assertions.assertEquals(authResult,expectedUser,"AuthDataBase did not clear");
+            Assertions.assertEquals(gameResult,expectedUser,"GameDataBase did not clear");
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

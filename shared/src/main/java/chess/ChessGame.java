@@ -12,19 +12,19 @@ import java.util.Collection;
 public class ChessGame {
 
     private ChessBoard board;
-    private TeamColor TeamTurn;
+    private TeamColor teamTurn;
 
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
-        TeamTurn = TeamColor.WHITE;
+        teamTurn = TeamColor.WHITE;
     }
 
     /**
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return TeamTurn;
+        return teamTurn;
     }
 
     /**
@@ -33,7 +33,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        TeamTurn = team;
+        teamTurn = team;
     }
 
     /**
@@ -92,7 +92,7 @@ public class ChessGame {
 
 
 
-        if(piece.getTeamColor() != TeamTurn){
+        if(piece.getTeamColor() != teamTurn){
             throw new InvalidMoveException("Not yo turn");
         }
 
@@ -106,9 +106,7 @@ public class ChessGame {
             board.removePiece(start);
         }
         //switch color
-        TeamTurn = TeamTurn==TeamColor.BLACK? TeamColor.WHITE : TeamColor.BLACK;
-
-
+        teamTurn = teamTurn==TeamColor.BLACK? TeamColor.WHITE : TeamColor.BLACK;
     }
 
     /**

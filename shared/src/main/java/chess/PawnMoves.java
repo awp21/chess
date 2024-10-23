@@ -22,23 +22,23 @@ public class PawnMoves {
         }
 
         ChessPosition pos = new ChessPosition(startPosition.getRow()+r, startPosition.getColumn());
-        ChessPiece Piece = board.getPiece(pos);
-        if(Piece == null){
+        ChessPiece piece = board.getPiece(pos);
+        if(piece == null){
             pawnMoves(board,startPosition,pos,color,moves);
         }
 
         pos = new ChessPosition(startPosition.getRow()+r, startPosition.getColumn()+1);
         if(pos.getColumn()>=1 && pos.getColumn()<=8){
-            Piece = board.getPiece(pos);
-            if(Piece != null && Piece.getTeamColor() != color){
+            piece = board.getPiece(pos);
+            if(piece != null && piece.getTeamColor() != color){
                 pawnMoves(board,startPosition,pos,color,moves);
             }
         }
 
         pos = new ChessPosition(startPosition.getRow()+r, startPosition.getColumn()-1);
         if(pos.getColumn()>=1 && pos.getColumn()<=8){
-            Piece = board.getPiece(pos);
-            if(Piece != null && Piece.getTeamColor() != color){
+            piece = board.getPiece(pos);
+            if(piece != null && piece.getTeamColor() != color){
                 pawnMoves(board,startPosition,pos,color,moves);
             }
         }

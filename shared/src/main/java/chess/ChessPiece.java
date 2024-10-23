@@ -97,8 +97,8 @@ public class ChessPiece {
         int c = startPosition.getColumn()+cOff;
         if(1<=r && r<=8 && 1<=c && c<=8){
             ChessPosition pos = new ChessPosition(r, c);
-            ChessPiece Piece = board.getPiece(pos);
-            if(Piece == null){
+            ChessPiece piece = board.getPiece(pos);
+            if(piece == null){
                 moves.add(new ChessMove(startPosition, pos,null));
                 return true;
             }
