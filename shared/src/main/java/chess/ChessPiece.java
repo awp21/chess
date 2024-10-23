@@ -96,8 +96,10 @@ public class ChessPiece {
         return Objects.hash(color, type);
     }
 
-    public static boolean getMovesHelper(ChessBoard board, ChessPosition startPosition, int rOff, int cOff, ChessGame.TeamColor color, Collection<ChessMove> moves) {
-
+    public static boolean getMovesHelper(BoardInfo boardInfo, int rOff, int cOff, Collection<ChessMove> moves) {
+        ChessBoard board = boardInfo.board();
+        ChessPosition startPosition = boardInfo.position();
+        ChessGame.TeamColor color = boardInfo.color();
         int r = startPosition.getRow()+rOff;
         int c = startPosition.getColumn()+cOff;
         if(1<=r && r<=8 && 1<=c && c<=8){
