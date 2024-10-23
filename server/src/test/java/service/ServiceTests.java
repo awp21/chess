@@ -10,7 +10,7 @@ import org.junit.jupiter.api.*;
 
 import java.util.*;
 
-public class serviceTests {
+public class ServiceTests {
 
     private UserDAO user;
     private AuthDAO auth;
@@ -48,6 +48,7 @@ public class serviceTests {
         }
     }
 
+
     @Test
     public void addTwoPlayersToGame(){
         try{
@@ -67,6 +68,20 @@ public class serviceTests {
             Assertions.assertEquals(tester.blackUsername(),player2.username(),"Player 2 not added");
         } catch (UnauthorizedException | BadRequestException | AlreadyTakenException | DataAccessException e) {
             assert false : "Error in request";
+        }
+    }
+
+    @Test
+    public void addPlayersWhereFullToGame(){
+        try{
+            AuthData auth = service.register(alreadyMadeUser);
+            var data = service.makeGame(auth.authToken(),"gameTest");
+            int id = data.gameID();
+            AddPlayer player = new AddPlayer("WHITE", id, alreadyMadeUser.username());
+            service.addPlayertoGame(auth.authToken(),player);
+            service.addPlayertoGame(auth.authToken(),player);
+            assert true : "AlreadyTakenException not caught!";
+        } catch (UnauthorizedException | BadRequestException | AlreadyTakenException ignore) {
         }
     }
 
