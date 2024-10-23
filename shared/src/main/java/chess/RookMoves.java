@@ -5,7 +5,10 @@ import java.util.Collection;
 
 public class RookMoves {
 
-    public static Collection<ChessMove> getRookMoves(ChessBoard board, ChessPosition startPosition, ChessGame.TeamColor color) {
+    public static Collection<ChessMove> getRookMoves(BoardInfo boardInfo) {
+        ChessBoard board = boardInfo.board();
+        ChessPosition startPosition = boardInfo.position();
+        ChessGame.TeamColor color = boardInfo.color();
         Collection<ChessMove> moves = new ArrayList<>();
         boolean t = true;
         for(int x = 1; x <= 8 && t; x++){

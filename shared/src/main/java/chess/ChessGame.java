@@ -204,18 +204,27 @@ public class ChessGame {
             return false;
         }
 
+        KingPosCheck kingPosCheck = new KingPosCheck(board,color,kingPos);
+
         for(int x = 1; x<=8; x++){
             for(int y = 1; y<=8; y++){
-                ChessPosition pos = new ChessPosition(x,y);
-                ChessPiece piece = board.getPiece(pos);
-                if(piece != null && piece.getTeamColor()!=color){
-                    Collection<ChessMove> checks = piece.pieceMoves(board,pos);
-                    for(ChessMove move : checks){
-                        ChessPosition attack = move.getEndPosition();
-                        if(attack.equals(kingPos)){
-                            return true;
-                        }
-                    }
+                if(oToELoop(x,y,kingPosCheck)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean oToELoop(int x, int y, KingPosCheck info){
+        ChessPosition pos = new ChessPosition(x,y);
+        ChessPiece piece = info.board().getPiece(pos);
+        if(piece != null && piece.getTeamColor()!=info.color()){
+            Collection<ChessMove> checks = piece.pieceMoves(info.board(),pos);
+            for(ChessMove move : checks){
+                ChessPosition attack = move.getEndPosition();
+                if(attack.equals(info.p())){
+                    return true;
                 }
             }
         }

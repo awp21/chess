@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class PawnMoves {
-    public static Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition startPosition, ChessGame.TeamColor color) {
+    public static Collection<ChessMove> getPawnMoves(BoardInfo boardInfo) {
         Collection<ChessMove> moves = new ArrayList<>();
-
-        getPawnMovesHelper(board, startPosition, color, moves);
-
+        ChessBoard board = boardInfo.board();
+        ChessPosition startPosition = boardInfo.position();
+        ChessGame.TeamColor color = boardInfo.color();
+        getPawnMovesHelper(boardInfo,moves);
         return moves;
     }
 
-    public static void getPawnMovesHelper(ChessBoard board, ChessPosition startPosition, ChessGame.TeamColor color, Collection<ChessMove> moves) {
+    public static void getPawnMovesHelper(BoardInfo boardInfo, Collection<ChessMove> moves) {
+        ChessBoard board = boardInfo.board();
+        ChessPosition startPosition = boardInfo.position();
+        ChessGame.TeamColor color = boardInfo.color();
         int r = 0;
         if(color == ChessGame.TeamColor.WHITE){
             r = 1;
@@ -24,14 +28,14 @@ public class PawnMoves {
         ChessPosition pos = new ChessPosition(startPosition.getRow()+r, startPosition.getColumn());
         ChessPiece piece = board.getPiece(pos);
         if(piece == null){
-            pawnMoves(board,startPosition,pos,color,moves);
+            pawnMoves(boardInfo,pos,moves);
         }
 
         pos = new ChessPosition(startPosition.getRow()+r, startPosition.getColumn()+1);
         if(pos.getColumn()>=1 && pos.getColumn()<=8){
             piece = board.getPiece(pos);
             if(piece != null && piece.getTeamColor() != color){
-                pawnMoves(board,startPosition,pos,color,moves);
+                pawnMoves(boardInfo,pos,moves);
             }
         }
 
@@ -39,13 +43,15 @@ public class PawnMoves {
         if(pos.getColumn()>=1 && pos.getColumn()<=8){
             piece = board.getPiece(pos);
             if(piece != null && piece.getTeamColor() != color){
-                pawnMoves(board,startPosition,pos,color,moves);
+                pawnMoves(boardInfo,pos,moves);
             }
         }
     }
 
-    public static void pawnMoves(ChessBoard board, ChessPosition startPosition, ChessPosition endPosition, ChessGame.TeamColor color, Collection<ChessMove> moves) {
-
+    public static void pawnMoves(BoardInfo boardInfo, ChessPosition endPosition, Collection<ChessMove> moves) {
+        ChessBoard board = boardInfo.board();
+        ChessPosition startPosition = boardInfo.position();
+        ChessGame.TeamColor color = boardInfo.color();
         int startingRow = 0;
         int endRow = 0;
         int doubleChange = 0;
