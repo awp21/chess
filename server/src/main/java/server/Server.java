@@ -16,10 +16,20 @@ public class Server {
     private Service s = new Service(userdao);
 
 
+
+
+
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        //Start Sqlserver???
+        try {
+            SQLDA sqlServer = new SQLDA();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", (req,res) -> deleteAll(res));
