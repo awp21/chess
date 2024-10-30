@@ -16,22 +16,6 @@ import static java.sql.Types.NULL;
 public class SQLDA {
     public SQLDA() throws DataAccessException{
         configureDatabase();
-        UserData user = new UserData("A","B","C");
-        //addSomeUsers(user);
-        //goodbyeData();
-        //System.out.printf("Nuked");
-    }
-
-    private void addSomeUsers(UserData user) throws DataAccessException {
-        String command = "INSERT INTO userDataBase (username, password, email)" +
-                "VALUES ('Henry', 'passWerddd','byu.edu')";
-
-        try (Connection conn = DatabaseManager.getConnection()) {
-            PreparedStatement preparedStatement = conn.prepareStatement(command);
-            preparedStatement.executeUpdate();
-        }catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private final String[] nukeData = {

@@ -11,7 +11,7 @@ public class SQLUserDAO implements UserDAO{
     @Override
     public void create(UserData newUser) throws DataAccessException {
         String command = "INSERT INTO userDataBase (username, password, email)" +
-                "VALUES ('Henry', 'passWerddd','byu.edu')";
+                "VALUES ('"+ newUser.username() + "','" + newUser.password() + "','" + newUser.email() +"')";
         try (Connection conn = DatabaseManager.getConnection()) {
             PreparedStatement preparedStatement = conn.prepareStatement(command);
             preparedStatement.executeUpdate();
