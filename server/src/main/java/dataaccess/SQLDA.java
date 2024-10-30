@@ -16,10 +16,9 @@ import static java.sql.Types.NULL;
 public class SQLDA {
     public SQLDA() throws DataAccessException{
         configureDatabase();
-        System.out.printf("ServerReachedSQLDA");
         UserData user = new UserData("A","B","C");
         //addSomeUsers(user);
-        goodbyeData();
+        //goodbyeData();
         //System.out.printf("Nuked");
     }
 
@@ -37,9 +36,13 @@ public class SQLDA {
 
     private final String[] nukeData = {
             """
-            DROP TABLE userDataBase,
-            DROP TABLE authDataBase,
-            DROP TABLE gameDataBase
+            TRUNCATE userDataBase
+            """,
+            """
+            TRUNCATE authDataBase
+            """,
+            """
+            TRUNCATE gameDataBase
             """
     };
 
@@ -94,6 +97,7 @@ public class SQLDA {
     private void goodbyeData() throws DataAccessException{
         try (Connection conn = DatabaseManager.getConnection()) {
             for (String statement : nukeData) {
+                System.out.println(statement);
                 try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
