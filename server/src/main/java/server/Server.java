@@ -65,7 +65,7 @@ public class Server {
         try {
             username = s.getUsernameFromAuthToken(authToken);
             player = new AddPlayer(player.playerColor(), player.gameID(), username);
-            s.addPlayertoGame(authToken,player);
+            s.addPlayerToGame(authToken,player);
             res.status(200);
             return "{}";
         }catch (UnauthorizedException e){

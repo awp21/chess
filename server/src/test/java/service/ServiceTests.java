@@ -60,8 +60,8 @@ public class ServiceTests {
             AddPlayer player = new AddPlayer("WHITE", id, alreadyMadeUser.username());
             AddPlayer luigiPlays = new AddPlayer("BLACK", id, player2.username());
             //Addplayer has problems here
-            service.addPlayertoGame(auth.authToken(),player);
-            service.addPlayertoGame(luigiAuth.authToken(), luigiPlays);
+            service.addPlayerToGame(auth.authToken(),player);
+            service.addPlayerToGame(luigiAuth.authToken(), luigiPlays);
             //THIS IS WHERE GAMEDAO IS WERID, FIX IT
             GameData tester = service.gamedao.getGame(id);
             Assertions.assertEquals(tester.whiteUsername(),alreadyMadeUser.username(),"Player 1 not added");
@@ -78,8 +78,8 @@ public class ServiceTests {
             var data = service.makeGame(auth.authToken(),"gameTest");
             int id = data.gameID();
             AddPlayer player = new AddPlayer("WHITE", id, alreadyMadeUser.username());
-            service.addPlayertoGame(auth.authToken(),player);
-            service.addPlayertoGame(auth.authToken(),player);
+            service.addPlayerToGame(auth.authToken(),player);
+            service.addPlayerToGame(auth.authToken(),player);
             assert true : "AlreadyTakenException not caught!";
         } catch (UnauthorizedException | BadRequestException | AlreadyTakenException ignore) {
         }

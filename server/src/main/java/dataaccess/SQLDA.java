@@ -26,7 +26,6 @@ public class SQLDA {
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
-              `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`username`),
               INDEX(username)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
@@ -35,19 +34,17 @@ public class SQLDA {
             CREATE TABLE IF NOT EXISTS  authDataBase(
               `authtoken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
-              `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`authtoken`),
               INDEX(authtoken)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """,
             """
             CREATE TABLE IF NOT EXISTS  gameDataBase(
-               `id` int NOT NULL,
-              `whiteUsername` varchar(256) NOT NULL,
-              `blackUsername` varchar(256) NOT NULL,
-              `gameName` varchar(256) NOT NULL,
-              `ChessGame` varchar(256) NOT NULL,
-              `json` TEXT DEFAULT NULL,
+              `id` int NOT NULL,
+              `whiteUsername` varchar(256),
+              `blackUsername` varchar(256),
+              `gameName` varchar(256),
+              `ChessGame` TEXT DEFAULT NULL,
               PRIMARY KEY (`id`),
               INDEX(id)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci

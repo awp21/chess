@@ -12,7 +12,7 @@ import java.util.Set;
 public class Service {
     private UserDAO userdao;
     private AuthDAO authdao = new SQLAuthDAO();
-    public GameDAO gamedao = new DAGame();
+    public GameDAO gamedao = new SQLGameDAO();
     //THIS WILL BE FIXED HEHE
 
     public Service(UserDAO userdao) {
@@ -44,7 +44,7 @@ public class Service {
 
     }
 
-    public void addPlayertoGame(String authToken, AddPlayer player)throws UnauthorizedException, BadRequestException,AlreadyTakenException{
+    public void addPlayerToGame(String authToken, AddPlayer player)throws UnauthorizedException, BadRequestException,AlreadyTakenException{
         try{
             if(authdao.get(authToken)!=null){
                 if(gamedao.getGame(player.gameID())!=null && player.playerColor() != null){
