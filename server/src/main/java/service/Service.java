@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class Service {
     private UserDAO userdao;
-    private AuthDAO authdao = new DAAuth();
+    private AuthDAO authdao = new SQLAuthDAO();
     public GameDAO gamedao = new DAGame();
     //THIS WILL BE FIXED HEHE
 
@@ -88,7 +88,9 @@ public class Service {
 
     public void logoutUser(String authToken)throws UnauthorizedException{
         try{
-            if(!authdao.deleteAuthToken(authToken)){
+            if(authdao.get(authToken)!=null){
+                authdao.deleteAuthToken(authToken);
+            }else{
                 throw new UnauthorizedException("Error: unauthorized");
             }
 

@@ -1,17 +1,6 @@
 package dataaccess;
 
-import com.google.gson.Gson;
-import model.UserData;
-import org.eclipse.jetty.server.Authentication;
-
-import javax.xml.crypto.Data;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.sql.*;
-
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
-
 
 public class SQLDA {
     public SQLDA() throws DataAccessException{

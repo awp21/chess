@@ -36,14 +36,12 @@ public class DAAuth implements AuthDAO{
     }
 
     @Override
-    public boolean deleteAuthToken(String authToken) throws DataAccessException{
+    public void deleteAuthToken(String authToken) throws DataAccessException{
         for(AuthData auth:authDataBase){
             if(auth.authToken().equals(authToken)){
                 authDataBase.remove(auth);
-                return true;
             }
         }
-        return false;
     }
 
     @Override
