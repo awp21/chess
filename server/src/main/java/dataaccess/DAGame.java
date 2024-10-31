@@ -47,7 +47,6 @@ public class DAGame implements GameDAO{
         }else{
             game = new GameData(addPlayer.gameID(), game.whiteUsername(), addPlayer.nameOfUser(), game.gameName(), game.game());
         }
-
         gameDataBase.add(game);
         return game;
     }

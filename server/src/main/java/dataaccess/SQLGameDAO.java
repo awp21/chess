@@ -4,36 +4,48 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import model.AddPlayer;
 import model.GameData;
-import model.UserData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Random;
+import java.util.HashSet;
 import java.util.Set;
 
 public class SQLGameDAO implements GameDAO{
     @Override
     public Set<GameData> listAllGames() throws DataAccessException {
-        return Set.of();
+        Set<GameData> allGames = new HashSet<>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            PreparedStatement preparedStatement = conn.prepareStatement("SELECT * FROM gamedatabase");
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next()) {
+
+                String gameString = rs.getString("ChessGame");
+                ChessGame game = new Gson().fromJson(gameString, ChessGame.class);
+                GameData addedGame = new GameData(rs.getInt("id"), rs.getString("whiteUsername"),
+                        rs.getString("blackUsername"), rs.getString("gameName"),
+                        game);
+                allGames.add(addedGame);
+            }
+            }catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        return allGames;
     }
 
     @Override
     public GameData createGame(String gameName) throws DataAccessException {
-        String command = "INSERT INTO gamedatabase (id," +
-                "gameName,ChessGame)" +
-                "VALUES (?,?,?)";
-        Random rand = new Random();
-        int gameID = rand.nextInt(1000);
+        String command = "INSERT INTO gamedatabase (gameName,ChessGame) VALUES (?,?)";
         try (Connection conn = DatabaseManager.getConnection()) {
-            PreparedStatement preparedStatement = conn.prepareStatement(command);
-            preparedStatement.setInt(1,gameID);
-            //PROBLEM HERE WITH CREATE,WHY IS NULL CAUSING PROBLEMS
-            preparedStatement.setString(2,gameName);
+            PreparedStatement preparedStatement = conn.prepareStatement(command, PreparedStatement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1,gameName);
             String json = new Gson().toJson(new ChessGame());
-            preparedStatement.setString(3,json);
+            preparedStatement.setString(2,json);
             preparedStatement.executeUpdate();
-            return new GameData(gameID,null,null,gameName,new ChessGame());
+            ResultSet res = preparedStatement.getGeneratedKeys();
+            res.next();
+            return new GameData(res.getInt(1),null,null,gameName,new ChessGame());
         }catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -42,9 +54,7 @@ public class SQLGameDAO implements GameDAO{
     @Override
     public GameData getGame(int gameId) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            var preparedStatement = conn.prepareStatement("SELECT id, whiteUsername," +
-                    " blackUsername, gameName," +
-                    "ChessGame FROM gamedatabase WHERE id=?");
+            var preparedStatement = conn.prepareStatement("SELECT * FROM gamedatabase WHERE id=?");
             preparedStatement.setInt(1, gameId);
             var rs = preparedStatement.executeQuery();
             if(!rs.next()){
@@ -68,7 +78,34 @@ public class SQLGameDAO implements GameDAO{
 
     @Override
     public GameData updateGame(AddPlayer addPlayer) throws DataAccessException {
-        return null;
+        GameData game = getGame(addPlayer.gameID());
+        boolean whiteAdded;
+        if(addPlayer.playerColor().equals("WHITE")){
+            game = new GameData(addPlayer.gameID(), addPlayer.nameOfUser(), game.blackUsername(), game.gameName(), game.game());
+            whiteAdded=true;
+        }else{
+            game = new GameData(addPlayer.gameID(), game.whiteUsername(), addPlayer.nameOfUser(), game.gameName(), game.game());
+            whiteAdded=false;
+        }
+        String command;
+        if(whiteAdded){
+            command = "UPDATE gamedatabase SET whiteUsername=? WHERE id=?";
+        }else{
+            command = "UPDATE gamedatabase SET blackUsername=? WHERE id=?";
+        }
+        try (Connection conn = DatabaseManager.getConnection()) {
+            PreparedStatement preparedStatement = conn.prepareStatement(command);
+            if(whiteAdded){
+                preparedStatement.setString(1,game.whiteUsername());
+            }else {
+                preparedStatement.setString(1, game.blackUsername());
+            }
+            preparedStatement.setInt(2,game.gameID());
+            preparedStatement.executeUpdate();
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return game;
     }
 
     @Override

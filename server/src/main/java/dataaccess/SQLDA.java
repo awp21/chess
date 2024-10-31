@@ -26,27 +26,24 @@ public class SQLDA {
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
-              PRIMARY KEY (`username`),
-              INDEX(username)
+              PRIMARY KEY (`username`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """,
             """
             CREATE TABLE IF NOT EXISTS  authDataBase(
               `authtoken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
-              PRIMARY KEY (`authtoken`),
-              INDEX(authtoken)
+              PRIMARY KEY (`authtoken`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """,
             """
             CREATE TABLE IF NOT EXISTS  gameDataBase(
-              `id` int NOT NULL,
+              `id` int NOT NULL AUTO_INCREMENT,
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
               `gameName` varchar(256),
               `ChessGame` TEXT DEFAULT NULL,
-              PRIMARY KEY (`id`),
-              INDEX(id)
+              PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
