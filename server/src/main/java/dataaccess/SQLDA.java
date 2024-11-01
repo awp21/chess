@@ -61,10 +61,9 @@ public class SQLDA {
         }
     }
 
-    private void goodbyeData() throws DataAccessException{
+    public void goodbyeData() throws DataAccessException{
         try (Connection conn = DatabaseManager.getConnection()) {
             for (String statement : nukeData) {
-                System.out.println(statement);
                 try (PreparedStatement preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
