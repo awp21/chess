@@ -6,6 +6,7 @@ import model.AddPlayer;
 import model.AuthData;
 import model.UserData;
 import model.GameData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Set;
 
@@ -13,7 +14,6 @@ public class Service {
     private UserDAO userdao;
     private AuthDAO authdao = new SQLAuthDAO();
     public GameDAO gamedao = new SQLGameDAO();
-    //THIS WILL BE FIXED HEHE
 
     public Service(UserDAO userdao) {
         this.userdao = userdao;
@@ -104,7 +104,7 @@ public class Service {
             if(null==userdao.get(user.username())){
                 throw new BadRequestException("Error: user does not exist");
             }
-            if(!user.password().equals(userdao.get(user.username()).password())){
+            if(!BCrypt.checkpw(user.password(),userdao.get(user.username()).password())){
                 throw new UnauthorizedException("Error: incorrect password");
             }
 
@@ -123,6 +123,9 @@ public class Service {
             if(null!=userdao.get(newUser.username())){
                 throw new AlreadyTakenException("Error: already taken");
             }
+
+            String hashedPassword = BCrypt.hashpw(newUser.password(), BCrypt.gensalt());
+            newUser = new UserData(newUser.username(),hashedPassword, newUser.email());
 
             userdao.create(newUser);
             return authdao.create(newUser.username());
