@@ -14,6 +14,7 @@ public class Service {
     private UserDAO userdao;
     private AuthDAO authdao = new SQLAuthDAO();
     public GameDAO gamedao = new SQLGameDAO();
+    public SQLDA sqlda = new SQLDA();
 
     public Service(UserDAO userdao) {
         this.userdao = userdao;

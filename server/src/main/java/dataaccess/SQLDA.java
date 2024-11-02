@@ -3,8 +3,13 @@ package dataaccess;
 import java.sql.*;
 
 public class SQLDA {
-    public SQLDA() throws DataAccessException{
-        configureDatabase();
+    public SQLDA(){
+        try{
+            configureDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private final String[] nukeData = {

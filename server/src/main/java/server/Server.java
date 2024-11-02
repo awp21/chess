@@ -24,12 +24,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        //Start Sqlserver???
-        try {
-            SQLDA sqlServer = new SQLDA();
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
-        }
+
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", (req,res) -> deleteAll(res));
