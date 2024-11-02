@@ -1,5 +1,7 @@
 package dataaccess;
 
+import chess.ChessGame;
+import model.AddPlayer;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -164,6 +166,83 @@ public class DataAccessTests {
         try{
             Assertions.assertTrue(game.listAllGames().isEmpty(),"Games not added");
         } catch (DataAccessException | RuntimeException ignore){
+        }
+    }
+
+    @Test
+    public void createTwoGames(){
+        try{
+            game.createGame("Donkey");
+            game.createGame("Kong");
+            assert (game.listAllGames().size() == 2): "Games not created properly";
+        } catch (DataAccessException | RuntimeException ignore){
+        }
+    }
+
+    @Test
+    public void createdNoGames() {
+        try {
+            GameData testData = new GameData(123,null,null,null,new ChessGame());
+            Assertions.assertNull(game.getGame(testData.gameID()),"Games not registered");
+        } catch (DataAccessException | RuntimeException ignore) {
+        }
+    }
+
+    @Test
+    public void getGame(){
+        try{
+            GameData testData = game.createGame("Donkey");
+            Assertions.assertEquals(game.getGame(testData.gameID()).gameID(),testData.gameID(),"Tested data not equal");
+        } catch (DataAccessException | RuntimeException ignore){
+        }
+    }
+
+    @Test
+    public void getBadGameID() {
+        try {
+            Assertions.assertNull(game.getGame(1),"Id returned good game");
+        } catch (DataAccessException | RuntimeException ignore) {
+        }
+    }
+
+    @Test
+    public void addPlayerToGame() {
+        try {
+            GameData testData = game.createGame("Joey");
+            AddPlayer player = new AddPlayer("WHITE",testData.gameID(),"Joey");
+            game.updateGame(player);
+            assert (game.getGame(testData.gameID()).whiteUsername().equals("Joey")) : "Joey not added";
+        } catch (DataAccessException | RuntimeException ignore) {
+        }
+    }
+
+    @Test
+    public void addPlayerToNoGame() {
+        try {
+            AddPlayer player = new AddPlayer("WHITE",5,"Joey");
+            int tester = game.updateGame(player).gameID();
+            assert false : "Player added to no game";
+        } catch (DataAccessException | RuntimeException ignore) {
+        }
+    }
+
+    @Test
+    public void testSpotEmpty() {
+        try {
+            GameData testData = game.createGame("Happy");
+            assert game.spotEmpty("WHITE", testData.gameID()): "Spot not empty";
+        } catch (DataAccessException | RuntimeException ignore) {
+        }
+    }
+
+    @Test
+    public void spotIsNotEmpty() {
+        try {
+            GameData testData = game.createGame("Happy");
+            AddPlayer player = new AddPlayer("WHITE", testData.gameID(), "Joey");
+            game.updateGame(player);
+            assert !game.spotEmpty("WHITE", testData.gameID()): "Spot returned empty";
+        } catch (DataAccessException | RuntimeException ignore) {
         }
     }
 
