@@ -14,13 +14,13 @@ public class SQLDA {
 
     private final String[] nukeData = {
             """
-            TRUNCATE userDataBase
+            TRUNCATE userdatabase
             """,
             """
-            TRUNCATE authDataBase
+            TRUNCATE authdatabase
             """,
             """
-            TRUNCATE gameDataBase
+            TRUNCATE gamedatabase
             """
     };
 
