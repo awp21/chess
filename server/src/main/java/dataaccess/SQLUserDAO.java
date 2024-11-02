@@ -10,7 +10,7 @@ import java.util.Set;
 public class SQLUserDAO implements UserDAO{
     @Override
     public void create(UserData newUser) throws DataAccessException {
-        String command = "INSERT INTO userDataBase (username, password, email)" +
+        String command = "INSERT INTO userdatabase (username, password, email)" +
                 "VALUES (?,?,?)";
         try (Connection conn = DatabaseManager.getConnection()) {
             PreparedStatement preparedStatement = conn.prepareStatement(command);
@@ -45,7 +45,7 @@ public class SQLUserDAO implements UserDAO{
 
     @Override
     public void clear() throws DataAccessException {
-        String command = "TRUNCATE userDataBase";
+        String command = "TRUNCATE userdatabase";
         try (Connection conn = DatabaseManager.getConnection()) {
             PreparedStatement preparedStatement = conn.prepareStatement(command);
             preparedStatement.executeUpdate();

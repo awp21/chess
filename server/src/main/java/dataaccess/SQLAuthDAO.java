@@ -12,7 +12,7 @@ public class SQLAuthDAO implements AuthDAO{
     @Override
     public AuthData create(String username) throws DataAccessException {
         String authToken = String.valueOf(UUID.randomUUID());
-        String command = "INSERT INTO authDataBase (authtoken, username)" +
+        String command = "INSERT INTO authdatabase (authtoken, username)" +
                 "VALUES (?,?)";
         try (Connection conn = DatabaseManager.getConnection()) {
             PreparedStatement preparedStatement = conn.prepareStatement(command);
@@ -46,7 +46,7 @@ public class SQLAuthDAO implements AuthDAO{
 
     @Override
     public void clear() throws DataAccessException {
-        String command = "TRUNCATE authDataBase";
+        String command = "TRUNCATE authdatabase";
         try (Connection conn = DatabaseManager.getConnection()) {
             PreparedStatement preparedStatement = conn.prepareStatement(command);
             preparedStatement.executeUpdate();
@@ -57,7 +57,7 @@ public class SQLAuthDAO implements AuthDAO{
 
     @Override
     public void deleteAuthToken(String authToken) throws DataAccessException {
-        String command = "DELETE FROM authDataBase WHERE authtoken=?";
+        String command = "DELETE FROM authdatabase WHERE authtoken=?";
         try (Connection conn = DatabaseManager.getConnection()) {
             PreparedStatement preparedStatement = conn.prepareStatement(command);
             preparedStatement.setString(1, authToken);
