@@ -27,7 +27,7 @@ public class SQLDA {
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  userDataBase(
+            CREATE TABLE IF NOT EXISTS  userdatabase(
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
@@ -35,14 +35,14 @@ public class SQLDA {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """,
             """
-            CREATE TABLE IF NOT EXISTS  authDataBase(
+            CREATE TABLE IF NOT EXISTS  authdatabase(
               `authtoken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
               PRIMARY KEY (`authtoken`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """,
             """
-            CREATE TABLE IF NOT EXISTS  gameDataBase(
+            CREATE TABLE IF NOT EXISTS  gamedatabase(
               `id` int NOT NULL AUTO_INCREMENT,
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
