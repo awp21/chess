@@ -3,11 +3,11 @@ package ui;
 import java.util.Scanner;
 
 public class PreLogin {
-    private String reg = "register <USERNAME> <PASSWORD> <EMAIL> - to create an account\n";
-    private String login = "login <USERNAME> <PASSWORD> - to play chess\n";
-    private String quit = "quit - playing chess\n";
-    private String help = "help - with possible commands\n";
-    private String loggedOutSet = "[LOGGED_OUT] >>> ";
+    private final String reg = "register <USERNAME> <PASSWORD> <EMAIL> - to create an account\n";
+    private final String login = "login <USERNAME> <PASSWORD> - to play chess\n";
+    private final String quit = "quit - playing chess\n";
+    private final String help = "help - with possible commands\n";
+    private final String loggedOutSet = "[LOGGED_OUT] >>> ";
     Scanner reader = new Scanner(System.in);
     private PostLogin postLogin= new PostLogin();
 
@@ -19,10 +19,16 @@ public class PreLogin {
         boolean continueLoop = true;
         String response;
         String [] parsedResponse;
+
         while(continueLoop) {
             System.out.print(loggedOutSet);
-            response = reader.next();
-            parsedResponse = response.split(" ");
+            response = reader.nextLine();
+            try{
+                parsedResponse = response.split(" ");
+                responseHandler(parsedResponse);
+            } catch (BadCommandException e) {
+                parsedResponse = new String[] {"Bad"};
+            }
             switch (parsedResponse[0]) {
                 case "help":
                     System.out.println(reg + login + quit + help);
@@ -32,7 +38,9 @@ public class PreLogin {
                     break;
                 case "login":
                     System.out.println("Logging in!");
-                    postLogin.postLogLooper();
+                    if(postLogin.postLogLooper().equals("quit")){
+                        return;
+                    }
                     break;
                 case "quit":
                     continueLoop = false;
@@ -40,7 +48,31 @@ public class PreLogin {
                     break;
                 default:
                     System.out.println("Command not understood, try again");
+                    break;
             }
+        }
+    }
+
+    private void responseHandler(String [] response) throws BadCommandException{
+        int len = response.length;
+        switch(len){
+            case 1:
+                if(!response[0].equals("quit")&&!response[0].equals("help")){
+                    throw new BadCommandException();
+                }
+                break;
+            case 3:
+                if(!response[0].equals("login")){
+                    throw new BadCommandException();
+                }
+                break;
+            case 4:
+                if(!response[0].equals("register")){
+                    throw new BadCommandException();
+                }
+                break;
+            default:
+                throw new BadCommandException();
         }
     }
 

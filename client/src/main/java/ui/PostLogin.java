@@ -3,27 +3,31 @@ package ui;
 import java.util.Scanner;
 
 public class PostLogin {
-    private String create = "create <NAME> - a game\n";
-    private String list = "list - games\n";
-    private String join = "join <ID> [WHITE|BLACK] - a game\n";
-    private String logout = "logout = when you are done\n";
-    private String quit = "quit - playing chess\n";
-    private String help = "help - with possible commands\n";
-    private String loggedInSet = "[LOGGED_IN] >>> ";
+    private final String create = "create <NAME> - a game\n";
+    private final String list = "list - games\n";
+    private final String join = "join <ID> [WHITE|BLACK] - a game\n";
+    private final String logout = "logout = when you are done\n";
+    private final String quit = "quit - playing chess\n";
+    private final String help = "help - with possible commands\n";
+    private final String loggedInSet = "[LOGGED_IN] >>> ";
     Scanner reader = new Scanner(System.in);
 
     public PostLogin(){
 
     }
 
-    public void postLogLooper(){
-        boolean continueLoop = true;
+    public String postLogLooper(){
         String response;
         String [] parsedResponse;
-        while(continueLoop) {
+        while(true) {
             System.out.print(loggedInSet);
-            response = reader.next();
-            parsedResponse = response.split(" ");
+            response = reader.nextLine();
+            try{
+                parsedResponse = response.split(" ");
+                responseHandler(parsedResponse);
+            } catch (BadCommandException e) {
+                parsedResponse = new String[] {"Bad"};
+            }
             switch (parsedResponse[0]) {
                 case "help":
                     System.out.println(create + list + join + logout + quit + help);
@@ -38,18 +42,38 @@ public class PostLogin {
                     System.out.println("Joining game...");
                     break;
                 case "logout":
-                    continueLoop = false;
                     System.out.println("Logging out...");
-                    break;
+                    return "";
                 case "quit":
-                    continueLoop = false;
                     System.out.println("Quitting...");
-                    break;
+                    return "quit";
                 default:
                     System.out.println("Command not understood, try again");
             }
         }
     }
 
-
+    private void responseHandler(String [] response) throws BadCommandException{
+        int len = response.length;
+        String first = response[0];
+        switch(len){
+            case 1:
+                if(!first.equals("quit")&&!first.equals("help")&&!first.equals("logout")&&!first.equals("list")){
+                    throw new BadCommandException();
+                }
+                break;
+            case 2:
+                if(!first.equals("create")&&!first.equals("observe")){
+                    throw new BadCommandException();
+                }
+                break;
+            case 3:
+                if(!first.equals("join")){
+                    throw new BadCommandException();
+                }
+                break;
+            default:
+                throw new BadCommandException();
+        }
+    }
 }
