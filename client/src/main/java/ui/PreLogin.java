@@ -1,5 +1,8 @@
 package ui;
 
+import model.AuthData;
+import model.UserData;
+
 import java.util.Scanner;
 
 public class PreLogin {
@@ -10,9 +13,10 @@ public class PreLogin {
     private final String loggedOutSet = "[LOGGED_OUT] >>> ";
     Scanner reader = new Scanner(System.in);
     private PostLogin postLogin= new PostLogin();
+    private ServerFacade serverfacade;
 
     public PreLogin(){
-
+        serverfacade = new ServerFacade(8080);
     }
 
     public void preLogLooper(){
@@ -35,6 +39,17 @@ public class PreLogin {
                     break;
                 case "register":
                     System.out.println("Registering!");
+
+                    UserData user = new UserData(parsedResponse[1],parsedResponse[2],parsedResponse[3]);
+                    try{
+                        AuthData auth = serverfacade.registerUser(user);
+                    } catch (ResponseException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("User registered!");
+
+                    //GO TO POST LOGIN!!!!
+
                     break;
                 case "login":
                     System.out.println("Logging in!");
