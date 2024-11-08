@@ -9,6 +9,7 @@ public class PreLogin {
     private String help = "help - with possible commands\n";
     private String loggedOutSet = "[LOGGED_OUT] >>> ";
     Scanner reader = new Scanner(System.in);
+    private PostLogin postLogin= new PostLogin();
 
     public PreLogin(){
 
@@ -27,12 +28,11 @@ public class PreLogin {
                     System.out.println(reg + login + quit + help);
                     break;
                 case "register":
-                    continueLoop = false;
                     System.out.println("Registering!");
                     break;
                 case "login":
-                    continueLoop = false;
                     System.out.println("Logging in!");
+                    postLogin.postLogLooper();
                     break;
                 case "quit":
                     continueLoop = false;
