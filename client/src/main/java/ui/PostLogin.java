@@ -1,5 +1,7 @@
 package ui;
 
+import model.AuthData;
+
 import java.util.Scanner;
 
 public class PostLogin {
@@ -11,9 +13,10 @@ public class PostLogin {
     private final String help = "help - with possible commands\n";
     private final String loggedInSet = "[LOGGED_IN] >>> ";
     Scanner reader = new Scanner(System.in);
+    private AuthData authData;
 
-    public PostLogin(){
-
+    public PostLogin(AuthData auth){
+        authData = auth;
     }
 
     public String postLogLooper(){

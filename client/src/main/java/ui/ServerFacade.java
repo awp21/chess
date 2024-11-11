@@ -25,6 +25,11 @@ public class ServerFacade {
         return this.makeRequest("POST",path, user,AuthData.class);
     }
 
+    public AuthData loginUser(UserData user) throws ResponseException {
+        String path = "/session";
+        return this.makeRequest("POST",path, user,AuthData.class);
+    }
+
     //I
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {

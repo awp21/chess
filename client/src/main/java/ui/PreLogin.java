@@ -12,7 +12,7 @@ public class PreLogin {
     private final String help = "help - with possible commands\n";
     private final String loggedOutSet = "[LOGGED_OUT] >>> ";
     Scanner reader = new Scanner(System.in);
-    private PostLogin postLogin= new PostLogin();
+    private PostLogin postLogin;
     private ServerFacade serverfacade;
 
     public PreLogin(){
@@ -40,19 +40,29 @@ public class PreLogin {
                 case "register":
                     System.out.println("Registering!");
 
-                    UserData user = new UserData(parsedResponse[1],parsedResponse[2],parsedResponse[3]);
+                    UserData regUser = new UserData(parsedResponse[1],parsedResponse[2],parsedResponse[3]);
                     try{
-                        AuthData auth = serverfacade.registerUser(user);
+                        AuthData auth = serverfacade.registerUser(regUser);
+                        postLogin = new PostLogin(auth);
                     } catch (ResponseException e) {
                         throw new RuntimeException(e);
                     }
                     System.out.println("User registered!");
-
+                    if(postLogin.postLogLooper().equals("quit")){
+                        return;
+                    }
+                    break;
                     //GO TO POST LOGIN!!!!
 
-                    break;
                 case "login":
-                    System.out.println("Logging in!");
+                    UserData loginUser = new UserData(parsedResponse[1],parsedResponse[2],"");
+                    try{
+                        AuthData auth = serverfacade.loginUser(loginUser);
+                        postLogin = new PostLogin(auth);
+                    } catch (ResponseException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("User logged in!");
                     if(postLogin.postLogLooper().equals("quit")){
                         return;
                     }
