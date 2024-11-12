@@ -43,7 +43,7 @@ public class PreLogin {
                     UserData regUser = new UserData(parsedResponse[1],parsedResponse[2],parsedResponse[3]);
                     try{
                         AuthData auth = serverfacade.registerUser(regUser);
-                        postLogin = new PostLogin(auth);
+                        postLogin = new PostLogin(auth,serverfacade);
                     } catch (ResponseException e) {
                         System.out.println("RegisterFailed");
                         break;
@@ -59,7 +59,7 @@ public class PreLogin {
                     UserData loginUser = new UserData(parsedResponse[1],parsedResponse[2],"");
                     try{
                         AuthData auth = serverfacade.loginUser(loginUser);
-                        postLogin = new PostLogin(auth);
+                        postLogin = new PostLogin(auth,serverfacade);
                     } catch (ResponseException e) {
                         System.out.println("LoginDidn'tWork");
                         break;

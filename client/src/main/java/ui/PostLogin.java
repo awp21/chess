@@ -14,9 +14,11 @@ public class PostLogin {
     private final String loggedInSet = "[LOGGED_IN] >>> ";
     Scanner reader = new Scanner(System.in);
     private AuthData authData;
+    private ServerFacade serverfacade;
 
-    public PostLogin(AuthData auth){
+    public PostLogin(AuthData auth,ServerFacade serverFacade){
         authData = auth;
+        serverfacade = serverFacade;
     }
 
     public String postLogLooper(){
@@ -37,18 +39,43 @@ public class PostLogin {
                     break;
                 case "create":
                     System.out.println("Creating game...");
+                    try{
+                        serverfacade.createGame(parsedResponse[1],authData.authToken());
+                    } catch (ResponseException e) {
+                        System.out.println("Shoot, something threw");
+                    }
                     break;
                 case "list":
                     System.out.println("Listing games...");
+                    try{
+                        serverfacade.listGames(authData.authToken());
+                    } catch (ResponseException e) {
+                        System.out.println("Shoot, something threw in listgames");
+                    }
                     break;
                 case "join":
                     System.out.println("Joining game...");
+                    try{
+                        serverfacade.joinGame(parsedResponse[1],parsedResponse[2],authData.authToken());
+                    } catch (ResponseException e) {
+                        System.out.println("Shoot, something threw in listgames");
+                    }
                     break;
                 case "logout":
                     System.out.println("Logging out...");
+                    try{
+                        serverfacade.logoutUser(authData.authToken());
+                    } catch (ResponseException e) {
+                        System.out.println("Shoot, something in logout");
+                    }
                     return "";
                 case "quit":
                     System.out.println("Quitting...");
+                    try{
+                        serverfacade.logoutUser(authData.authToken());
+                    } catch (ResponseException e) {
+                        System.out.println("Shoot, something in logout");
+                    }
                     return "quit";
                 default:
                     System.out.println("Command not understood, try again");

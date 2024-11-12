@@ -34,9 +34,21 @@ public class ServerFacade {
     public void logoutUser(String authToken) throws ResponseException {
         String path = "/session";
         RequestModel req = new RequestModel("DELETE",path,"",authToken);
-        //WHAT DO I DO WHEN THE RESPONSE DOESNT MATTER?
+        //WHAT DO I DO WHEN THE RESPONSE DON'T MATTER?
         this.makeRequest(req, null);
         return;
+    }
+
+    public ListGamesResult listGames(String authToken) throws ResponseException{
+        String path = "/game";
+        RequestModel req = new RequestModel("GET",path,"",authToken);
+        return this.makeRequest(req,ListGamesResult.class);
+    }
+
+    public void joinGame(String iD, String color, String authToken) throws ResponseException{
+        String path = "/game";
+        RequestModel req = new RequestModel("PUT",path,"",authToken);
+        this.makeRequest(req,null);
     }
 
     public GameIDOnly createGame(String gameName, String authToken) throws ResponseException {
