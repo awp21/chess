@@ -45,7 +45,8 @@ public class PreLogin {
                         AuthData auth = serverfacade.registerUser(regUser);
                         postLogin = new PostLogin(auth);
                     } catch (ResponseException e) {
-                        throw new RuntimeException(e);
+                        System.out.println("RegisterFailed");
+                        break;
                     }
                     System.out.println("User registered!");
                     if(postLogin.postLogLooper().equals("quit")){
@@ -60,7 +61,8 @@ public class PreLogin {
                         AuthData auth = serverfacade.loginUser(loginUser);
                         postLogin = new PostLogin(auth);
                     } catch (ResponseException e) {
-                        throw new RuntimeException(e);
+                        System.out.println("LoginDidn'tWork");
+                        break;
                     }
                     System.out.println("User logged in!");
                     if(postLogin.postLogLooper().equals("quit")){

@@ -1,7 +1,6 @@
 package ui;
 import com.google.gson.Gson;
-import model.AuthData;
-import model.UserData;
+import model.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,23 +21,47 @@ public class ServerFacade {
 
     public AuthData registerUser(UserData user) throws ResponseException{
         String path = "/user";
-        return this.makeRequest("POST",path, user,AuthData.class);
+        RequestModel req = new RequestModel("POST",path,user,null);
+        return this.makeRequest(req,AuthData.class);
     }
 
     public AuthData loginUser(UserData user) throws ResponseException {
         String path = "/session";
-        return this.makeRequest("POST",path, user,AuthData.class);
+        RequestModel req = new RequestModel("POST",path,user,null);
+        return this.makeRequest(req,AuthData.class);
     }
 
+    public void logoutUser(String authToken) throws ResponseException {
+        String path = "/session";
+        RequestModel req = new RequestModel("DELETE",path,"",authToken);
+        //WHAT DO I DO WHEN THE RESPONSE DOESNT MATTER?
+        this.makeRequest(req, null);
+        return;
+    }
+
+    public GameIDOnly createGame(String gameName, String authToken) throws ResponseException {
+        String path = "/game";
+        GameData game = new GameData(-1,null,null,gameName, null);
+        RequestModel req = new RequestModel("POST",path,game,authToken);
+        //FOUND AN ISSUE HERE!!!
+        return this.makeRequest(req,GameIDOnly.class);
+    }
+
+
+
     //I
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(RequestModel req, Class<T> responseClass) throws ResponseException {
         try {
-            URL url = (new URI(serverUrl + path)).toURL();
+            URL url = (new URI(serverUrl + req.path())).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
-            http.setRequestMethod(method);
+            http.setRequestMethod(req.method());
+            if(req.authToken()!=null){
+                http.setRequestProperty("authorization",req.authToken());
+            }
+
             http.setDoOutput(true);
 
-            writeBody(request, http);
+            writeBody(req.request(), http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
