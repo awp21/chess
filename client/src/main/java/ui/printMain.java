@@ -4,6 +4,8 @@ import chess.ChessBoard;
 
 public class printMain {
         public static void main(String[] args) {
-            ChessPrinting test = new ChessPrinting(new ChessBoard());
+            ChessBoard testBoard = new ChessBoard();
+            testBoard.resetBoard();
+            ChessPrinting test = new ChessPrinting(testBoard);
         }
 }
