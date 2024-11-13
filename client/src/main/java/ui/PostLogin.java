@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessBoard;
+import model.AddPlayer;
 import model.AuthData;
 
 import java.util.Scanner;
@@ -8,6 +10,7 @@ public class PostLogin {
     private final String create = "create <NAME> - a game\n";
     private final String list = "list - games\n";
     private final String join = "join <ID> [WHITE|BLACK] - a game\n";
+    private final String observe = "observe <ID> - a game\n-";
     private final String logout = "logout = when you are done\n";
     private final String quit = "quit - playing chess\n";
     private final String help = "help - with possible commands\n";
@@ -35,7 +38,7 @@ public class PostLogin {
             }
             switch (parsedResponse[0]) {
                 case "help":
-                    System.out.println(create + list + join + logout + quit + help);
+                    System.out.println(create + list + join + observe + logout + quit + help);
                     break;
                 case "create":
                     System.out.println("Creating game...");
@@ -49,6 +52,7 @@ public class PostLogin {
                     System.out.println("Listing games...");
                     try{
                         serverfacade.listGames(authData.authToken());
+                        //THROWS HERE
                     } catch (ResponseException e) {
                         System.out.println("Shoot, something threw in listgames");
                     }
@@ -56,11 +60,18 @@ public class PostLogin {
                 case "join":
                     System.out.println("Joining game...");
                     try{
-                        serverfacade.joinGame(parsedResponse[1],parsedResponse[2],authData.authToken());
+                        AddPlayer player = new AddPlayer(parsedResponse[2],Integer.parseInt(parsedResponse[1]), authData.username());
+                        serverfacade.joinGame(player,authData.authToken());
                     } catch (ResponseException e) {
-                        System.out.println("Shoot, something threw in listgames");
+                        System.out.println("Shoot, something threw in joinGame");
                     }
                     break;
+                case "observe":
+                    System.out.println("Observing game");
+                    serverfacade.observeGame(new ChessBoard());
+
+                    break;
+
                 case "logout":
                     System.out.println("Logging out...");
                     try{

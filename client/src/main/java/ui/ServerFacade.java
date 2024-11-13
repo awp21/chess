@@ -1,4 +1,5 @@
 package ui;
+import chess.ChessBoard;
 import com.google.gson.Gson;
 import model.*;
 
@@ -45,9 +46,9 @@ public class ServerFacade {
         return this.makeRequest(req,ListGamesResult.class);
     }
 
-    public void joinGame(String iD, String color, String authToken) throws ResponseException{
+    public void joinGame(AddPlayer player, String authToken) throws ResponseException{
         String path = "/game";
-        RequestModel req = new RequestModel("PUT",path,"",authToken);
+        RequestModel req = new RequestModel("PUT",path,player,authToken);
         this.makeRequest(req,null);
     }
 
@@ -57,6 +58,10 @@ public class ServerFacade {
         RequestModel req = new RequestModel("POST",path,game,authToken);
         //FOUND AN ISSUE HERE!!!
         return this.makeRequest(req,GameIDOnly.class);
+    }
+
+    public void observeGame(ChessBoard board){
+        ChessPrinting printer = new ChessPrinting(board);
     }
 
 
