@@ -53,7 +53,6 @@ public class PreLogin {
                         return;
                     }
                     break;
-                    //GO TO POST LOGIN!!!!
 
                 case "login":
                     UserData loginUser = new UserData(parsedResponse[1],parsedResponse[2],"");
