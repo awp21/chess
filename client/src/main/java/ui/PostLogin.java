@@ -1,8 +1,10 @@
 package ui;
 
-import chess.ChessBoard;
+import chess.ChessGame;
 import model.AddPlayer;
 import model.AuthData;
+import model.GameData;
+import model.ListGamesResult;
 
 import java.util.Scanner;
 
@@ -18,10 +20,16 @@ public class PostLogin {
     Scanner reader = new Scanner(System.in);
     private AuthData authData;
     private ServerFacade serverfacade;
+    private ListGamesResult games;
 
     public PostLogin(AuthData auth,ServerFacade serverFacade){
         authData = auth;
         serverfacade = serverFacade;
+        try{
+            games = serverfacade.listGames(authData.authToken());
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String postLogLooper(){
@@ -68,7 +76,8 @@ public class PostLogin {
                     break;
                 case "observe":
                     System.out.println("Observing game");
-                    serverfacade.observeGame(new ChessBoard());
+                    //GET GAMEDATA TO OBSERVE
+                    serverfacade.observeGame(new GameData(1,"White","Black","GameName",new ChessGame()));
 
                     break;
 

@@ -1,38 +1,67 @@
 package ui;
 
 import chess.*;
+import model.GameData;
 
 public class ChessPrinting {
-    private ChessBoard board;
-    private static String whiteEmptySquare = EscapeSequences.SET_BG_COLOR_WHITE+EscapeSequences.EMPTY+EscapeSequences.RESET_BG_COLOR;
-    private static String blackEmptySquare = EscapeSequences.SET_BG_COLOR_BLACK+EscapeSequences.EMPTY+EscapeSequences.RESET_BG_COLOR;
+    private GameData gameData;
 
-    public ChessPrinting(ChessBoard b) {
-        board = b;
-        printBoard();
+    public ChessPrinting(GameData gameData) {
+        this.gameData = gameData;
+        printWhiteBoard();
+        printBlackBoard();
     }
 
-    private void printBoard(){
+    private void printBlackBoard(){
         System.out.println(EscapeSequences.RESET_BG_COLOR);
-        System.out.println(" A  B  C  D  E  F  G  H ");
+        System.out.println("H   G   F  E   D  C   B   A ");
+        for(int r = 1; r<=8;r++){
+            printRow(r,"Black");
+        }
+        System.out.println("Black is "+gameData.blackUsername());
+    }
+
+    private void printWhiteBoard(){
+        System.out.println(EscapeSequences.RESET_BG_COLOR);
+        System.out.println("A   B   C   D  E   F   G   H ");
         for(int r = 8; r>=1;r--){
-            printRow(r);
+            printRow(r,"White");
         }
+        System.out.println("White is "+gameData.whiteUsername());
     }
 
-    private void printRow(int row){
-        for(int col = 1; col<=8; col++){
-            ChessPosition pos = new ChessPosition(row,col);
-            System.out.print(colorPrinter(pos));
-            ChessPiece piece = board.getPiece(pos);
-            //What if piece isn't there?
-            if(piece != null){
-                System.out.print(piecePrinter(piece));
-            }else{
-                System.out.print(EscapeSequences.EMPTY);
-            }
+    private void printRow(int row,String color){
+        ChessBoard board = gameData.game().getBoard();
+        switch(color){
+            case "White":
+                for(int col = 1; col<=8; col++){
+                    ChessPosition pos = new ChessPosition(row,col);
+                    System.out.print(colorPrinter(pos));
+                    ChessPiece piece = board.getPiece(pos);
+                    //What if piece isn't there?
+                    if(piece != null){
+                        System.out.print(piecePrinter(piece));
+                    }else{
+                        System.out.print(EscapeSequences.EMPTY);
+                    }
+                }
+                break;
+            case "Black":
+                for(int col = 8; col>=1; col--){
+                    ChessPosition pos = new ChessPosition(row,col);
+                    System.out.print(colorPrinter(pos));
+                    ChessPiece piece = board.getPiece(pos);
+                    //What if piece isn't there?
+                    if(piece != null){
+                        System.out.print(piecePrinter(piece));
+                    }else{
+                        System.out.print(EscapeSequences.EMPTY);
+                    }
+                }
+                break;
         }
-        System.out.println(EscapeSequences.RESET_BG_COLOR);
+        System.out.print(EscapeSequences.RESET_BG_COLOR);
+        System.out.println(" "+row);
     }
 
     private String colorPrinter(ChessPosition pos){

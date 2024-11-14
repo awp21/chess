@@ -1,5 +1,6 @@
 package ui;
 import chess.ChessBoard;
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.*;
 
@@ -60,8 +61,8 @@ public class ServerFacade {
         return this.makeRequest(req,GameIDOnly.class);
     }
 
-    public void observeGame(ChessBoard board){
-        ChessPrinting printer = new ChessPrinting(board);
+    public void observeGame(GameData gameData){
+        ChessPrinting printer = new ChessPrinting(gameData);
     }
 
 
@@ -81,6 +82,7 @@ public class ServerFacade {
             writeBody(req.request(), http);
             http.connect();
             throwIfNotSuccessful(http);
+            //READBODY BREAKS
             return readBody(http, responseClass);
         } catch (Exception ex) {
             throw new ResponseException(500, ex.getMessage());
