@@ -25,11 +25,11 @@ public class PostLogin {
     public PostLogin(AuthData auth,ServerFacade serverFacade){
         authData = auth;
         serverfacade = serverFacade;
-//        try{
-//            games = serverfacade.listGames(authData.authToken());
-//        } catch (ResponseException e) {
-//            throw new RuntimeException(e);
-//        }
+        try{
+            games = serverfacade.listGames(authData.authToken());
+        } catch (ResponseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String postLogLooper(){

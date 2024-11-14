@@ -35,7 +35,7 @@ public class ServerFacade {
 
     public void logoutUser(String authToken) throws ResponseException {
         String path = "/session";
-        RequestModel req = new RequestModel("DELETE",path,"",authToken);
+        RequestModel req = new RequestModel("DELETE",path,null,authToken);
         //WHAT DO I DO WHEN THE RESPONSE DON'T MATTER?
         this.makeRequest(req, null);
         return;
@@ -43,7 +43,7 @@ public class ServerFacade {
 
     public ListGamesResult listGames(String authToken) throws ResponseException{
         String path = "/game";
-        RequestModel req = new RequestModel("GET",path,"",authToken);
+        RequestModel req = new RequestModel("GET",path,null ,authToken);
         return this.makeRequest(req,ListGamesResult.class);
     }
 
