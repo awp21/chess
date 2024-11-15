@@ -19,7 +19,6 @@ public class ServerFacade {
     public ServerFacade(int port) {
         serverUrl = "http://localhost:"+port;
     }
-    //Addsomething to change serverUrl depending on port
 
     public AuthData registerUser(UserData user) throws ResponseException{
         String path = "/user";
@@ -66,8 +65,6 @@ public class ServerFacade {
     }
 
 
-
-    //I
     private <T> T makeRequest(RequestModel req, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + req.path())).toURL();

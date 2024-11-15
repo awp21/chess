@@ -6,7 +6,7 @@ import model.AuthData;
 import model.GameData;
 import model.ListGamesResult;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class PostLogin {
     private final String create = "create <NAME> - a game\n";
@@ -21,15 +21,45 @@ public class PostLogin {
     private AuthData authData;
     private ServerFacade serverfacade;
     private ListGamesResult games;
+    private Map<Integer,Integer> idMap;
 
     public PostLogin(AuthData auth,ServerFacade serverFacade){
         authData = auth;
         serverfacade = serverFacade;
         try{
             games = serverfacade.listGames(authData.authToken());
+            mapGames();
         } catch (ResponseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void listAllGames(){
+        List<GameData> gamesList = mapGames();
+        for(int i = 0; i<gamesList.size();i++){
+            GameData game = gamesList.get(i);
+            int gameNum = i+1;
+            String gameName = game.gameName();
+            String whiteName = game.whiteUsername();
+            String blackName = game.blackUsername();
+            System.out.println("Game number: "+gameNum+" Name: "+gameName);
+            System.out.println("White Player: "+whiteName);
+            System.out.println("Black Player: "+blackName);
+            System.out.println();
+        }
+    }
+
+    private List<GameData> mapGames(){
+        Set<GameData> gameDataSet = games.games();
+        List<GameData> gamesList = new ArrayList<>(gameDataSet);
+        idMap = new HashMap<>();
+        for(int i = 0; i<gamesList.size();i++){
+            GameData game = gamesList.get(i);
+            int gameId = game.gameID();
+            int gameNum = i+1;
+            idMap.put(gameNum,gameId);
+        }
+        return gamesList;
     }
 
     public String postLogLooper(){
@@ -52,6 +82,8 @@ public class PostLogin {
                     System.out.println("Creating game...");
                     try{
                         serverfacade.createGame(parsedResponse[1],authData.authToken());
+                        games = serverfacade.listGames(authData.authToken());
+                        mapGames();
                     } catch (ResponseException e) {
                         System.out.println("Shoot, something threw");
                     }
@@ -59,8 +91,8 @@ public class PostLogin {
                 case "list":
                     System.out.println("Listing games...");
                     try{
-                        serverfacade.listGames(authData.authToken());
-                        //THROWS HERE
+                        games = serverfacade.listGames(authData.authToken());
+                        listAllGames();
                     } catch (ResponseException e) {
                         System.out.println("Shoot, something threw in listgames");
                     }
@@ -68,8 +100,10 @@ public class PostLogin {
                 case "join":
                     System.out.println("Joining game...");
                     try{
-                        AddPlayer player = new AddPlayer(parsedResponse[2],Integer.parseInt(parsedResponse[1]), authData.username());
+                        int gameNumber = idMap.get(Integer.parseInt(parsedResponse[1]));
+                        AddPlayer player = new AddPlayer(parsedResponse[2],gameNumber, authData.username());
                         serverfacade.joinGame(player,authData.authToken());
+                        mapGames();
                     } catch (ResponseException e) {
                         System.out.println("Shoot, something threw in joinGame");
                     }
@@ -77,6 +111,7 @@ public class PostLogin {
                 case "observe":
                     System.out.println("Observing game");
                     //GET GAMEDATA TO OBSERVE
+
                     serverfacade.observeGame(new GameData(1,"White","Black","GameName",new ChessGame()));
 
                     break;
