@@ -35,28 +35,12 @@ public class ChessPrinting {
         switch(color){
             case "White":
                 for(int col = 1; col<=8; col++){
-                    ChessPosition pos = new ChessPosition(row,col);
-                    System.out.print(colorPrinter(pos));
-                    ChessPiece piece = board.getPiece(pos);
-                    //What if piece isn't there?
-                    if(piece != null){
-                        System.out.print(piecePrinter(piece));
-                    }else{
-                        System.out.print(EscapeSequences.EMPTY);
-                    }
+                    loopPrinter(row,col,board);
                 }
                 break;
             case "Black":
                 for(int col = 8; col>=1; col--){
-                    ChessPosition pos = new ChessPosition(row,col);
-                    System.out.print(colorPrinter(pos));
-                    ChessPiece piece = board.getPiece(pos);
-                    //What if piece isn't there?
-                    if(piece != null){
-                        System.out.print(piecePrinter(piece));
-                    }else{
-                        System.out.print(EscapeSequences.EMPTY);
-                    }
+                    loopPrinter(row,col,board);
                 }
                 break;
         }
@@ -110,6 +94,19 @@ public class ChessPrinting {
         }
         return null;
     }
+
+    private void loopPrinter(int row, int col,ChessBoard board){
+        ChessPosition pos = new ChessPosition(row,col);
+        System.out.print(colorPrinter(pos));
+        ChessPiece piece = board.getPiece(pos);
+        //What if piece isn't there?
+        if(piece != null){
+            System.out.print(piecePrinter(piece));
+        }else{
+            System.out.print(EscapeSequences.EMPTY);
+        }
+    }
+
 
 
 
