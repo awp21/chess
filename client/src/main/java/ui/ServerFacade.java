@@ -37,7 +37,6 @@ public class ServerFacade {
         RequestModel req = new RequestModel("DELETE",path,null,authToken);
         //WHAT DO I DO WHEN THE RESPONSE DON'T MATTER?
         this.makeRequest(req, null);
-        return;
     }
 
     public ListGamesResult listGames(String authToken) throws ResponseException{
@@ -56,7 +55,6 @@ public class ServerFacade {
         String path = "/game";
         GameData game = new GameData(-1,null,null,gameName, null);
         RequestModel req = new RequestModel("POST",path,game,authToken);
-        //FOUND AN ISSUE HERE!!!
         return this.makeRequest(req,GameIDOnly.class);
     }
 
@@ -64,6 +62,11 @@ public class ServerFacade {
         ChessPrinting printer = new ChessPrinting(gameData);
     }
 
+    public void clearData(String authToken) throws ResponseException {
+        String path = "/db";
+        RequestModel req = new RequestModel("DELETE",path,null,authToken);
+        this.makeRequest(req,null);
+    }
 
     private <T> T makeRequest(RequestModel req, Class<T> responseClass) throws ResponseException {
         try {

@@ -22,20 +22,20 @@ public class PostLogin {
     private ServerFacade serverfacade;
     private ListGamesResult games;
     private Map<Integer,Integer> idMap;
+    private List<GameData> gamesList;
 
     public PostLogin(AuthData auth,ServerFacade serverFacade){
         authData = auth;
         serverfacade = serverFacade;
         try{
             games = serverfacade.listGames(authData.authToken());
-            mapGames();
+            gamesList = mapGames();
         } catch (ResponseException e) {
             throw new RuntimeException(e);
         }
     }
 
     private void listAllGames(){
-        List<GameData> gamesList = mapGames();
         for(int i = 0; i<gamesList.size();i++){
             GameData game = gamesList.get(i);
             int gameNum = i+1;
@@ -50,8 +50,7 @@ public class PostLogin {
     }
 
     private List<GameData> mapGames(){
-        Set<GameData> gameDataSet = games.games();
-        List<GameData> gamesList = new ArrayList<>(gameDataSet);
+        List<GameData> gamesList = new ArrayList<>(games.games());
         idMap = new HashMap<>();
         for(int i = 0; i<gamesList.size();i++){
             GameData game = gamesList.get(i);
@@ -83,7 +82,7 @@ public class PostLogin {
                     try{
                         serverfacade.createGame(parsedResponse[1],authData.authToken());
                         games = serverfacade.listGames(authData.authToken());
-                        mapGames();
+                        gamesList = mapGames();
                     } catch (ResponseException e) {
                         System.out.println("Shoot, something threw");
                     }
@@ -92,6 +91,7 @@ public class PostLogin {
                     System.out.println("Listing games...");
                     try{
                         games = serverfacade.listGames(authData.authToken());
+                        gamesList = mapGames();
                         listAllGames();
                     } catch (ResponseException e) {
                         System.out.println("Shoot, something threw in listgames");
@@ -103,17 +103,16 @@ public class PostLogin {
                         int gameNumber = idMap.get(Integer.parseInt(parsedResponse[1]));
                         AddPlayer player = new AddPlayer(parsedResponse[2],gameNumber, authData.username());
                         serverfacade.joinGame(player,authData.authToken());
-                        mapGames();
+                        gamesList = mapGames();
                     } catch (ResponseException e) {
                         System.out.println("Shoot, something threw in joinGame");
                     }
                     break;
                 case "observe":
                     System.out.println("Observing game");
-                    //GET GAMEDATA TO OBSERVE
-
-                    serverfacade.observeGame(new GameData(1,"White","Black","GameName",new ChessGame()));
-
+                    //GET GAMEDATA TO OBSERVE!!!
+                    GameData gameToSee = gamesList.get(Integer.parseInt(parsedResponse[1])-1);
+                    serverfacade.observeGame(gameToSee);
                     break;
 
                 case "logout":
