@@ -104,15 +104,22 @@ public class PostLogin {
                         AddPlayer player = new AddPlayer(parsedResponse[2],gameNumber, authData.username());
                         serverfacade.joinGame(player,authData.authToken());
                         gamesList = mapGames();
-                    } catch (ResponseException e) {
-                        System.out.println("Shoot, something threw in joinGame");
+                    } catch (ResponseException |NumberFormatException e) {
+                        System.out.println("Request not understood, try again");
                     }
                     break;
                 case "observe":
                     System.out.println("Observing game");
                     //GET GAMEDATA TO OBSERVE!!!
-                    GameData gameToSee = gamesList.get(Integer.parseInt(parsedResponse[1])-1);
-                    serverfacade.observeGame(gameToSee);
+                    try{
+                        int lookGame = Integer.parseInt(parsedResponse[1])-1;
+                        GameData gameToSee = gamesList.get(Integer.parseInt(parsedResponse[1])-1);
+                        serverfacade.observeGame(gameToSee);
+                    } catch (IndexOutOfBoundsException e) {
+                        System.out.println("This game number is out of bounds");
+                    }catch(NumberFormatException e){
+                        System.out.println("Command not understood, try again");
+                    }
                     break;
 
                 case "logout":
