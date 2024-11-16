@@ -133,6 +133,32 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void createBadGameTest(){
+        try{
+            serverFacade.createGame("TestGame","BADAUTH");
+            assert false : "Created game with bad Authtoken";
+        } catch (ResponseException ignore) {
+        }
+    }
+
+    @Test
+    public void observeTest(){
+        GameData data = new GameData(1,"w","b","game",new ChessGame());
+        serverFacade.observeGame(data);
+        Assertions.assertTrue(data instanceof GameData,"Game Not observed");
+    }
+
+    @Test
+    public void clearTest(){
+        try{
+            AuthData auth = serverFacade.registerUser(testUser);
+            serverFacade.clearData(auth.authToken());
+        } catch (ResponseException ignore) {
+            assert false : "Exception thrown on clear";
+        }
+    }
+
+    @Test
     public void registerTest() {
         try{
             AuthData auth = serverFacade.registerUser(testUser);
