@@ -100,13 +100,23 @@ public class PostLogin {
                 case "join":
                     System.out.println("Joining game...");
                     try{
-                        int gameNumber = idMap.get(Integer.parseInt(parsedResponse[1]));
-                        AddPlayer player = new AddPlayer(parsedResponse[2],gameNumber, authData.username());
-                        serverfacade.joinGame(player,authData.authToken());
-                        gamesList = mapGames();
-                    } catch (ResponseException |NumberFormatException e) {
+                        String color = parsedResponse[2];
+                        if(color.equals("BLACK") || color.equals("WHITE")){
+                            int gameNumber = idMap.get(Integer.parseInt(parsedResponse[1]));
+                            AddPlayer player = new AddPlayer(parsedResponse[2],gameNumber, authData.username());
+                            serverfacade.joinGame(player,authData.authToken());
+                            gamesList = mapGames();
+                        }else{
+                            throw new Exception();
+                        }
+                    } catch (ResponseException |NumberFormatException | NullPointerException e) {
                         System.out.println("Request not understood, try again");
+                    } catch (Exception e) {
+                        System.out.println("Color isn't white or black!");
                     }
+
+
+
                     break;
                 case "observe":
                     System.out.println("Observing game");

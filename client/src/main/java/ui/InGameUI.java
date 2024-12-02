@@ -1,0 +1,83 @@
+package ui;
+
+import model.AddPlayer;
+import model.AuthData;
+import model.GameData;
+
+import java.util.Scanner;
+
+public class InGameUI {
+    private final String redraw = "redraw - the board\n";
+    private final String leave = "leave - the game\n";
+    private final String makeMove = "move - <position> to <position>\n";
+    private final String resign = "resign - forfeit the game\n";
+    private final String highlight = "highlight - the legal moves of <position>\n";
+    private final String help = "help - with possible commands\n";
+    private final String inGame = "[PLAYING] >>> ";
+    Scanner reader = new Scanner(System.in);
+    private AuthData authData;
+
+    public InGameUI(AuthData auth){
+        authData = auth;
+    }
+
+    public void inGameLooper(){
+        String response;
+        String [] parsedResponse;
+        while(true) {
+            System.out.print(inGame);
+            response = reader.nextLine();
+            try{
+                parsedResponse = response.split(" ");
+                responseHandler(parsedResponse);
+            } catch (BadCommandException e) {
+                parsedResponse = new String[] {"Bad"};
+            }
+            switch (parsedResponse[0]) {
+                case "help":
+                    System.out.println(redraw + leave + makeMove + resign + highlight + help);
+                    break;
+                case "redraw":
+                    System.out.println("Redrawing board...");
+                    //RE DRAW BOARD
+                    break;
+                case "leave":
+                    System.out.println("Leaving game...");
+                    //SERVER MESSAGE PLAYER LEFT GAME
+                    return;
+                case "makeMove":
+                    System.out.println("Making Move...");
+                    //SERVER MESSAGE PLAYER MADE MOVE
+                    System.out.println("Move Made!");
+                    break;
+                default:
+                    System.out.println("Command not understood, try again");
+            }
+        }
+    }
+
+    private void responseHandler(String [] response) throws BadCommandException{
+        int len = response.length;
+        String first = response[0];
+        switch(len){
+            case 1:
+                if(!first.equals("redraw")&&!first.equals("help")&&!first.equals("leave")&&!first.equals("resign")){
+                    throw new BadCommandException();
+                }
+                break;
+            case 2:
+                if(!first.equals("highlight")){
+                    throw new BadCommandException();
+                }
+                break;
+            case 3:
+                if(!first.equals("move")){
+                    throw new BadCommandException();
+                }
+                break;
+            default:
+                throw new BadCommandException();
+        }
+    }
+
+}
