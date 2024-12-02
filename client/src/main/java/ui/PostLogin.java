@@ -115,7 +115,8 @@ public class PostLogin {
                         System.out.println("Color isn't white or black!");
                     }
 
-
+                    InGameUI ingame = new InGameUI(authData);
+                    ingame.inGameLooper();
 
                     break;
                 case "observe":

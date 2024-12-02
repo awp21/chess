@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessMove;
+import chess.ChessPosition;
 import model.AddPlayer;
 import model.AuthData;
 import model.GameData;
@@ -45,10 +47,23 @@ public class InGameUI {
                     System.out.println("Leaving game...");
                     //SERVER MESSAGE PLAYER LEFT GAME
                     return;
-                case "makeMove":
-                    System.out.println("Making Move...");
+                case "move":
+                    System.out.println("Making move...");
                     //SERVER MESSAGE PLAYER MADE MOVE
+                    ChessPosition start = chessPositionTranslator(parsedResponse[1]);
+                    ChessPosition end = chessPositionTranslator(parsedResponse[2]);
+                    System.out.println(start.getRow());
+                    System.out.println(start.getColumn());
                     System.out.println("Move Made!");
+                    break;
+                case "resign":
+                    System.out.println("Resigning...");
+                    //SERVER MESSAGE PLAYER resigned
+                    System.out.println("Resigned");
+                    break;
+                case "highlight":
+                    System.out.println("Highlighting moves...");
+                    //HIGHLIGHT MOVE PRINTBOARD
                     break;
                 default:
                     System.out.println("Command not understood, try again");
@@ -78,6 +93,15 @@ public class InGameUI {
             default:
                 throw new BadCommandException();
         }
+    }
+
+    private ChessPosition chessPositionTranslator(String input){
+        char column = input.charAt(0);
+        char row = input.charAt(1);
+        int c = column - 'A' + 1;
+        int r = Integer.parseInt(String.valueOf(row));
+        return new ChessPosition(r,c);
+        //NOT TESTED
     }
 
 }
