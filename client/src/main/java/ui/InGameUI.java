@@ -2,9 +2,11 @@ package ui;
 
 import chess.ChessMove;
 import chess.ChessPosition;
+import com.google.gson.Gson;
 import model.AddPlayer;
 import model.AuthData;
 import model.GameData;
+import websocket.commands.UserGameCommand;
 
 import java.util.Scanner;
 
@@ -18,14 +20,27 @@ public class InGameUI {
     private final String inGame = "[PLAYING] >>> ";
     Scanner reader = new Scanner(System.in);
     private AuthData authData;
+    private WSClient ws;
 
     public InGameUI(AuthData auth){
         authData = auth;
+        try{
+            ws = new WSClient();
+            //PUT AT START OF GAME
+            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, auth.authToken(), 3);
+            Gson g = new Gson();
+            String json = g.toJson(command);
+            ws.send(json);
+
+        } catch (Exception e) {
+            System.out.println("I've decided not to work right now.");
+        }
     }
 
     public void inGameLooper(){
         String response;
         String [] parsedResponse;
+
         while(true) {
             System.out.print(inGame);
             response = reader.nextLine();
@@ -59,6 +74,8 @@ public class InGameUI {
                 case "resign":
                     System.out.println("Resigning...");
                     //SERVER MESSAGE PLAYER resigned
+
+
                     System.out.println("Resigned");
                     break;
                 case "highlight":

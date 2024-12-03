@@ -24,8 +24,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-
-
+        Spark.webSocket("/ws", WSServer.class);
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", (req,res) -> deleteAll(res));
         Spark.post("/user", (req, res) -> createUser(req,res));
@@ -33,15 +32,10 @@ public class Server {
         Spark.delete("/session", (req, res) -> logout(req,res));
         Spark.post("/game", (req,res)->createGame(req,res));
         Spark.get("/game", (req,res)->listGames(req,res));
-        //I don't know if ListGames works until I do JoinGame
-        //Also, it says "Expected Json Got [] when empty???"
         Spark.put("/game", (req,res)->joinGame(req,res));
 
-        //NOTES FOR TA!!!
-        //MY TESTS DON'T PASS BC I DON'T KNOW HOW TO RETURN {} AT THE ENDS
-        //ALSO, RETURNING THE COLLECITON IS WRONG TOO
+        //HERE I PUT MY WSERVER???
 
-        //This line initializes the server and can be removed once you have a functioning endpoint
 
         Spark.awaitInitialization();
         return Spark.port();
