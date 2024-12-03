@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
@@ -8,6 +9,7 @@ import model.AuthData;
 import model.GameData;
 import websocket.commands.UserGameCommand;
 
+import java.util.Collection;
 import java.util.Scanner;
 
 public class InGameUI {
@@ -21,6 +23,9 @@ public class InGameUI {
     Scanner reader = new Scanner(System.in);
     private AuthData authData;
     private WSClient ws;
+
+    //PASS IN LATER
+    private GameData gameData = new GameData(1,"W","B","name",new ChessGame());
 
     public InGameUI(AuthData auth){
         authData = auth;
@@ -80,7 +85,14 @@ public class InGameUI {
                     break;
                 case "highlight":
                     System.out.println("Highlighting moves...");
-                    //HIGHLIGHT MOVE PRINTBOARD
+                    //HIGHLIGHT MOVES PRINTBOARD
+                    ChessPrinting chessPrinting = new ChessPrinting(gameData);
+                    chessPrinting.highlightSetter(true);
+                    ChessPosition pos = chessPositionTranslator(parsedResponse[1]);
+                    Collection<ChessMove> moves = gameData.game().validMoves(pos);
+                    chessPrinting.collectionSetter(moves);
+                    chessPrinting.printWhiteBoard();
+                    chessPrinting.highlightSetter(false);
                     break;
                 default:
                     System.out.println("Command not understood, try again");

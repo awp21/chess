@@ -3,16 +3,20 @@ package ui;
 import chess.*;
 import model.GameData;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 public class ChessPrinting {
     private GameData gameData;
+    private Collection<ChessMove> validMoves;
+    private Boolean highlightCheck;
 
     public ChessPrinting(GameData gameData) {
         this.gameData = gameData;
-        printWhiteBoard();
-        printBlackBoard();
+        highlightCheck = false;
     }
 
-    private void printBlackBoard(){
+    public void printBlackBoard(){
         System.out.println(EscapeSequences.RESET_BG_COLOR);
         System.out.println("H   G   F  E   D  C   B   A ");
         for(int r = 1; r<=8;r++){
@@ -21,7 +25,7 @@ public class ChessPrinting {
         System.out.println("Black is "+gameData.blackUsername());
     }
 
-    private void printWhiteBoard(){
+    public void printWhiteBoard(){
         System.out.println(EscapeSequences.RESET_BG_COLOR);
         System.out.println("A   B   C   D  E   F   G   H ");
         for(int r = 8; r>=1;r--){
@@ -95,11 +99,32 @@ public class ChessPrinting {
         return null;
     }
 
+    public void highlightSetter(Boolean tf){
+        highlightCheck = tf;
+    }
+
+    public void collectionSetter(Collection<ChessMove> validMoves){
+        this.validMoves = validMoves;
+    }
+
     private void loopPrinter(int row, int col,ChessBoard board){
         ChessPosition pos = new ChessPosition(row,col);
-        System.out.print(colorPrinter(pos));
+        if(!highlightCheck){
+            System.out.print(colorPrinter(pos));
+        }
+        else{
+            Collection<ChessPosition> possibleMoves = new HashSet<>();
+            for(ChessMove m : validMoves){
+                possibleMoves.add(m.getEndPosition());
+            }
+            if(possibleMoves.contains(pos)){
+                System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+            }else{
+                System.out.print(colorPrinter(pos));
+            }
+        }
+        //HERE ADD HIGHLIGHTS
         ChessPiece piece = board.getPiece(pos);
-        //What if piece isn't there?
         if(piece != null){
             System.out.print(piecePrinter(piece));
         }else{

@@ -106,6 +106,11 @@ public class PostLogin {
                             AddPlayer player = new AddPlayer(parsedResponse[2],gameNumber, authData.username());
                             serverfacade.joinGame(player,authData.authToken());
                             gamesList = mapGames();
+
+                            //INSTEAD OF HERE
+                            InGameUI ingame = new InGameUI(authData);
+                            ingame.inGameLooper();
+
                         }else{
                             throw new Exception();
                         }
@@ -114,9 +119,8 @@ public class PostLogin {
                     } catch (Exception e) {
                         System.out.println("Color isn't white or black!");
                     }
+                    //MAYBE UI GOES HERE??
 
-                    InGameUI ingame = new InGameUI(authData);
-                    ingame.inGameLooper();
 
                     break;
                 case "observe":

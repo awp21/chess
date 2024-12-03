@@ -15,5 +15,4 @@ public class WSServer {
         session.getRemote().sendString(message);
     }
 
-
 }
