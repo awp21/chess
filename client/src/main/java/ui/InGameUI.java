@@ -32,11 +32,7 @@ public class InGameUI {
         try{
             ws = new WSClient();
             //PUT AT START OF GAME
-            UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, auth.authToken(), 3);
-            Gson g = new Gson();
-            String json = g.toJson(command);
-            ws.send(json);
-
+            commandSender(UserGameCommand.CommandType.CONNECT);
         } catch (Exception e) {
             System.out.println("I've decided not to work right now.");
         }
@@ -66,20 +62,35 @@ public class InGameUI {
                 case "leave":
                     System.out.println("Leaving game...");
                     //SERVER MESSAGE PLAYER LEFT GAME
+                    try{
+                        commandSender(UserGameCommand.CommandType.LEAVE);
+                    } catch (Exception e) {
+                        System.out.println("Leave send failed");
+                    }
+
                     return;
                 case "move":
                     System.out.println("Making move...");
                     //SERVER MESSAGE PLAYER MADE MOVE
                     ChessPosition start = chessPositionTranslator(parsedResponse[1]);
                     ChessPosition end = chessPositionTranslator(parsedResponse[2]);
-                    System.out.println(start.getRow());
-                    System.out.println(start.getColumn());
+
+                    try{
+                        commandSender(UserGameCommand.CommandType.MAKE_MOVE);
+                    } catch (Exception e) {
+                        System.out.println("Makemove send failed");
+                    }
+
                     System.out.println("Move Made!");
                     break;
                 case "resign":
                     System.out.println("Resigning...");
                     //SERVER MESSAGE PLAYER resigned
-
+                    try{
+                        commandSender(UserGameCommand.CommandType.RESIGN);
+                    } catch (Exception e) {
+                        System.out.println("Resign send failed");
+                    }
 
                     System.out.println("Resigned");
                     break;
@@ -99,6 +110,15 @@ public class InGameUI {
             }
         }
     }
+
+    private void commandSender(UserGameCommand.CommandType type)throws Exception{
+        UserGameCommand command = new UserGameCommand(type, authData.authToken(), 1);
+        Gson g = new Gson();
+        String json = g.toJson(command);
+        ws.send(json);
+    }
+
+
 
     private void responseHandler(String [] response) throws BadCommandException{
         int len = response.length;
