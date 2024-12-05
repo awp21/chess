@@ -13,6 +13,8 @@ public class ChessGame {
 
     private ChessBoard board;
     private TeamColor teamTurn;
+    private boolean whiteHasWon = false;
+    private boolean blackHasWon = false;
 
     public ChessGame() {
         board = new ChessBoard();
@@ -27,6 +29,8 @@ public class ChessGame {
         return teamTurn;
     }
 
+
+
     /**
      * Set's which teams turn it is
      *
@@ -35,6 +39,16 @@ public class ChessGame {
     public void setTeamTurn(TeamColor team) {
         teamTurn = team;
     }
+
+    public boolean isWhiteHasWon() {
+        return whiteHasWon;
+    }
+
+
+    public boolean isBlackHasWon() {
+        return blackHasWon;
+    }
+
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -123,7 +137,13 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         if(isInCheck(teamColor)){
             if(!validMovesExist(teamColor)){
-                return true;
+                if(teamColor.equals(TeamColor.WHITE)){
+                    blackHasWon = true;
+                    return true;
+                }else{
+                    whiteHasWon = true;
+                    return true;
+                }
             }
         }
         return false;

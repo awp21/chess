@@ -1,6 +1,7 @@
 package service;
 
 
+import chess.ChessGame;
 import dataaccess.*;
 import model.AddPlayer;
 import model.AuthData;
@@ -8,6 +9,7 @@ import model.UserData;
 import model.GameData;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.Iterator;
 import java.util.Set;
 
 public class Service {
@@ -23,6 +25,29 @@ public class Service {
             userdao.clear();
             authdao.clear();
             gamedao.clear();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static GameData getGameFromID(int gameID,String authToken)throws UnauthorizedException{
+        try{
+            if(authToken != null) {
+                if(authdao.get(authToken) == null) {
+                    throw new UnauthorizedException("Bad Authtoken");
+                }
+            }else{
+                throw new UnauthorizedException("AuthToken Null");
+            }
+            Iterator<GameData> gameDataIterator = listGames(authToken).iterator();
+            GameData gameDataTester = null;
+            while(gameDataIterator.hasNext()){
+                gameDataTester = gameDataIterator.next();
+                if(gameDataTester.gameID()==gameID){
+                    return gameDataTester;
+                }
+            }
+            return null;
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

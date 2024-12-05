@@ -2,15 +2,12 @@ package server;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AddPlayer;
 import model.GameData;
-import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
 import service.BadRequestException;
 import service.Service;
 import service.UnauthorizedException;
-import spark.Spark;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -24,6 +21,7 @@ public class WSServer {
 
     private Map<Integer, List<Session>> sessionMap = new HashMap<>();
     private Session session;
+    private GameData gameData;
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
         System.out.printf("Received: %s", message);
@@ -32,9 +30,34 @@ public class WSServer {
         Gson g = new Gson();
         UserGameCommand recievedCommand = g.fromJson(message, UserGameCommand.class);
         int gameId = recievedCommand.getGameID();
-        sessionMapper(this.session,gameId);
-        //CALL NEW SERVICE METHOD
+        try{
+            gameData = Service.getGameFromID(gameId,recievedCommand.getAuthToken());
+        } catch (UnauthorizedException e) {
+            errorSender("Unauthorized",session);
+            return;
+        }
 
+        System.out.println(gameData);
+
+        sessionMapper(this.session,gameId);
+
+
+//        Iterator<GameData> gameDataIterator = Service.listGames(recievedCommand.getAuthToken()).iterator();
+//        GameData selectedGameData;
+//        GameData foundGameData = null;
+//        while(gameDataIterator.hasNext()){
+//            selectedGameData = gameDataIterator.next();
+//            if(selectedGameData.gameID()==gameId){
+//                foundGameData = selectedGameData;
+//                chessGame = foundGameData.game();
+//            }
+//        }
+//        if(foundGameData != null){
+//            errorSender("Bad GameID sent",session);
+//            return;
+//        }
+
+        //CALL NEW SERVICE METHOD
 
         UserGameCommand.CommandType type = recievedCommand.getCommandType();
         switch (type){
@@ -44,22 +67,18 @@ public class WSServer {
                 break;
             case LEAVE:
                 System.out.println("Leave Recieved!");
-
                 break;
             case RESIGN:
                 System.out.println("Resign Recieved!");
                 break;
             case MAKE_MOVE:
                 System.out.println("MakeMove Recieved!");
-                loadGameSender(new ChessGame(),session);
+                loadHandler(recievedCommand,gameId);
                 break;
             default:
                 System.out.println("Default Case, didn't work");
                 break;
         }
-
-
-        //SEND DIFFERENT SESSIONS??? MAKE A LIST THAT SORTS SESSIONS FOR LOADGAME/NOTIFICATIONS
     }
 
     private void loadHandler(UserGameCommand recievedCommand, int gameId) throws Exception {
@@ -114,7 +133,7 @@ public class WSServer {
 
     private void loadGameSender(ChessGame game,Session session) throws Exception{
         Gson g = new Gson();
-        ServerMessage serverMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME,new ChessGame());
+        ServerMessage serverMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME,gameData.game());
         String jsonMessage = g.toJson(serverMessage);
         session.getRemote().sendString(jsonMessage);
         System.out.println(jsonMessage);

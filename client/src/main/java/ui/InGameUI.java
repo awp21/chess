@@ -22,16 +22,14 @@ public class InGameUI {
     private final String inGame = "[PLAYING] >>> ";
     Scanner reader = new Scanner(System.in);
     private AuthData authData;
-    private WSClient ws;
-
-    //PASS IN LATER
     private GameData gameData;
+    private WSClient ws;
 
     public InGameUI(AuthData auth,GameData gameData){
         authData = auth;
+        this.gameData = gameData;
         try{
             ws = new WSClient();
-            //PUT AT START OF GAME
             commandSender(UserGameCommand.CommandType.CONNECT);
         } catch (Exception e) {
             System.out.println("I've decided not to work right now.");
@@ -74,7 +72,6 @@ public class InGameUI {
                     //SERVER MESSAGE PLAYER MADE MOVE
                     ChessPosition start = chessPositionTranslator(parsedResponse[1]);
                     ChessPosition end = chessPositionTranslator(parsedResponse[2]);
-
                     try{
                         commandSender(UserGameCommand.CommandType.MAKE_MOVE);
                     } catch (Exception e) {
