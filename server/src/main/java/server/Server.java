@@ -11,13 +11,8 @@ import java.util.Set;
 
 public class Server {
 
-    private UserDAO userdao = new SQLUserDAO();
-//    maybe I don't need these?
-    private Service s = new Service(userdao);
 
-
-
-
+    private Service s = new Service();
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);

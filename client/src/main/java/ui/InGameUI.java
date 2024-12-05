@@ -25,9 +25,9 @@ public class InGameUI {
     private WSClient ws;
 
     //PASS IN LATER
-    private GameData gameData = new GameData(1,"W","B","name",new ChessGame());
+    private GameData gameData;
 
-    public InGameUI(AuthData auth){
+    public InGameUI(AuthData auth,GameData gameData){
         authData = auth;
         try{
             ws = new WSClient();

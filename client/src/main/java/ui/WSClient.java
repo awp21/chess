@@ -1,4 +1,10 @@
 package ui;
+import chess.ChessGame;
+import com.google.gson.Gson;
+import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.ServerMessage;
+
 import javax.websocket.*;
 import java.net.URI;
 import java.util.Scanner;
@@ -15,7 +21,19 @@ public class WSClient extends Endpoint {
             public void onMessage(String message) {
                 //CHANGE JSON TO OBJECT
                 //MAKE SERVER MESSAGE
-                System.out.println(message);
+                Gson g = new Gson();
+                ServerMessage recievedCommand = g.fromJson(message, ServerMessage.class);
+                switch(recievedCommand.getServerMessageType()){
+                    case NOTIFICATION:
+                        System.out.println("Notification Recieved");
+                        break;
+                    case ERROR:
+                        System.out.println("Error Recieved");
+                        break;
+                    case LOAD_GAME:
+                        System.out.println("Loadgame Recieved");
+                        break;
+                }
             }
         });
     }

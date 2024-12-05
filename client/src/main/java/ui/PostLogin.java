@@ -107,8 +107,8 @@ public class PostLogin {
                             serverfacade.joinGame(player,authData.authToken());
                             gamesList = mapGames();
 
-                            //INSTEAD OF HERE
-                            InGameUI ingame = new InGameUI(authData);
+                            //MAYBE THIS IS THE PROBLEM HERE!!! THE GET GAME NUMBER
+                            InGameUI ingame = new InGameUI(authData,gamesList.get(gameNumber));
                             ingame.inGameLooper();
 
                         }else{

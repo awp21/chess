@@ -11,17 +11,14 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.util.Set;
 
 public class Service {
-    private UserDAO userdao;
-    private AuthDAO authdao = new SQLAuthDAO();
-    public GameDAO gamedao = new SQLGameDAO();
-    public SQLDA sqlda = new SQLDA();
+    private static final UserDAO userdao= new SQLUserDAO();
+    private static final AuthDAO authdao = new SQLAuthDAO();
+    public static final GameDAO gamedao = new SQLGameDAO();
 
-    public Service(UserDAO userdao) {
-        this.userdao = userdao;
-    }
+    //MAKE METHOD
 
 
-    public void deleteData(){
+    public static void deleteData(){
         try {
             userdao.clear();
             authdao.clear();
@@ -31,7 +28,11 @@ public class Service {
         }
     }
 
-    public String getUsernameFromAuthToken(String authToken)throws UnauthorizedException{
+    public static void makeMove(){
+
+    }
+
+    public static String getUsernameFromAuthToken(String authToken)throws UnauthorizedException{
         try{
             if(authToken != null) {
                 if (authdao.get(authToken) != null) {
@@ -45,7 +46,7 @@ public class Service {
 
     }
 
-    public void addPlayerToGame(String authToken, AddPlayer player)throws UnauthorizedException, BadRequestException,AlreadyTakenException{
+    public static void addPlayerToGame(String authToken, AddPlayer player)throws UnauthorizedException, BadRequestException,AlreadyTakenException{
         try{
             if(authdao.get(authToken)!=null){
                 if(gamedao.getGame(player.gameID())!=null && player.playerColor() != null){
@@ -65,7 +66,7 @@ public class Service {
         }
     }
 
-    public Set<GameData> listGames(String auth)throws UnauthorizedException{
+    public static Set<GameData> listGames(String auth)throws UnauthorizedException{
         try{
             if(authdao.get(auth)!=null){
                 return gamedao.listAllGames();
@@ -76,7 +77,7 @@ public class Service {
         }
     }
 
-    public GameData makeGame(String authToken,String gameName)throws UnauthorizedException{
+    public static GameData makeGame(String authToken,String gameName)throws UnauthorizedException{
         try{
             if(authdao.get(authToken)!=null){
                 return gamedao.createGame(gameName);
@@ -87,7 +88,7 @@ public class Service {
         }
     }
 
-    public void logoutUser(String authToken)throws UnauthorizedException{
+    public static void logoutUser(String authToken)throws UnauthorizedException{
         try{
             if(authdao.get(authToken)!=null){
                 authdao.deleteAuthToken(authToken);
@@ -100,7 +101,7 @@ public class Service {
         }
     }
 
-    public AuthData loginUser(UserData user) throws UnauthorizedException, BadRequestException {
+    public static AuthData loginUser(UserData user) throws UnauthorizedException, BadRequestException {
         try {
             if(null==userdao.get(user.username())){
                 throw new BadRequestException("Error: user does not exist");
@@ -115,7 +116,7 @@ public class Service {
         }
     }
 
-    public AuthData register(UserData newUser) throws AlreadyTakenException, BadRequestException{
+    public static AuthData register(UserData newUser) throws AlreadyTakenException, BadRequestException{
         try {
             if(newUser.username() == null || newUser.email() == null || newUser.password() == null){
                 throw new BadRequestException("Error: bad request");

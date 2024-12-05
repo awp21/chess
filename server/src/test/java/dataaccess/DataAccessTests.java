@@ -13,7 +13,6 @@ public class DataAccessTests {
     private UserDAO user;
     private AuthDAO auth;
     private GameDAO game;
-    private SQLDA sql;
     UserData userMan = new UserData("Billy","Bob","Joe");
 
 
@@ -23,7 +22,7 @@ public class DataAccessTests {
         user = new SQLUserDAO();
         auth = new SQLAuthDAO();
         game = new SQLGameDAO();
-        sql = new SQLDA();
+        SQLDA sql = new SQLDA();
         sql.goodbyeData();
     }
 
