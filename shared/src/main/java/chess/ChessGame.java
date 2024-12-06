@@ -89,20 +89,21 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if(whiteHasWon||blackHasWon){
+            throw new InvalidMoveException("Game is over!");
+        }
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
         ChessPiece piece = board.getPiece(start);
         if(piece == null){
-            throw new InvalidMoveException("Ain't no piece there");
+            throw new InvalidMoveException("Position is empty");
         }
-
         Collection<ChessMove> testThese = validMoves(start);
         if(!testThese.contains(move)){
             throw new InvalidMoveException("Invalid Move");
         }
-
         if(piece.getTeamColor() != teamTurn){
-            throw new InvalidMoveException("Not yo turn");
+            throw new InvalidMoveException("Its not your turn");
         }
 
         ChessPiece.PieceType promotes = move.getPromotionPiece();
@@ -113,6 +114,14 @@ public class ChessGame {
             ChessPiece pawnPromotion = new ChessPiece(piece.getTeamColor(),promotes);
             board.addPiece(end,pawnPromotion);
             board.removePiece(start);
+        }
+        if(isInCheckmate(TeamColor.BLACK)){
+            whiteHasWon = true;
+            return;
+        }
+        if(isInCheckmate(TeamColor.WHITE)){
+            blackHasWon = true;
+            return;
         }
         //switch color
         teamTurn = teamTurn==TeamColor.BLACK? TeamColor.WHITE : TeamColor.BLACK;

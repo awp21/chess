@@ -1,5 +1,7 @@
 package dataaccess;
 
+import chess.ChessGame;
+import chess.ChessMove;
 import model.AddPlayer;
 import model.GameData;
 
@@ -12,4 +14,5 @@ public interface GameDAO {
     GameData updateGame(AddPlayer addPlayer) throws DataAccessException;
     boolean spotEmpty(String color, int gameId) throws DataAccessException;
     void clear() throws DataAccessException;
+    void makeMoveInGame(ChessGame game, int gameId) throws DataAccessException;
 }

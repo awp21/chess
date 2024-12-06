@@ -125,4 +125,18 @@ public class SQLGameDAO implements GameDAO{
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void makeMoveInGame(ChessGame game, int gameId) throws DataAccessException {
+        String command = "UPDATE gamedatabase SET ChessGame=? WHERE id=?";
+        try (Connection conn = DatabaseManager.getConnection()) {
+            PreparedStatement preparedStatement = conn.prepareStatement(command);
+            String json = new Gson().toJson(game);
+            preparedStatement.setString(1,json);
+            preparedStatement.setInt(2,gameId);
+            preparedStatement.executeUpdate();
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

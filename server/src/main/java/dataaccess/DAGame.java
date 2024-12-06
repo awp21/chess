@@ -63,5 +63,10 @@ public class DAGame implements GameDAO{
         gameDataBase = new HashSet<>();
     }
 
+    @Override
+    public void makeMoveInGame(ChessGame game, int gameId) throws DataAccessException {
+        //OOPS
+    }
+
     private Set<GameData> gameDataBase = new HashSet<>();
 }

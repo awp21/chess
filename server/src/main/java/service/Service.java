@@ -53,8 +53,23 @@ public class Service {
         }
     }
 
-    public static void makeMove(){
-
+    public static void makeMove(ChessGame game, int gameId, String authToken) throws UnauthorizedException, BadRequestException{
+        try{
+            if(authToken != null) {
+                if(authdao.get(authToken) == null) {
+                    throw new UnauthorizedException("Bad Authtoken");
+                }
+            }else{
+                throw new UnauthorizedException("AuthToken Null");
+            }
+            if(getGameFromID(gameId,authToken)!=null){
+                gamedao.makeMoveInGame(game,gameId);
+                return;
+            }
+            throw new BadRequestException("GameID doesn't exist");
+        }catch(DataAccessException e){
+            throw new RuntimeException(e);
+        }
     }
 
     public static String getUsernameFromAuthToken(String authToken)throws UnauthorizedException{
