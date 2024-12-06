@@ -108,7 +108,7 @@ public class PostLogin {
                             gamesList = mapGames();
 
                             //MAYBE THIS IS THE PROBLEM HERE!!! THE GET GAME NUMBER
-                            InGameUI ingame = new InGameUI(authData,gamesList.get(gameNumber));
+                            InGameUI ingame = new InGameUI(authData,gamesList.get(gameNumber-1));
                             ingame.inGameLooper();
 
                         }else{

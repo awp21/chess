@@ -34,6 +34,7 @@ public class WSClient extends Endpoint {
                         System.out.println("Loadgame Recieved");
                         LoadGameMessage loadGameMessage = g.fromJson(message, LoadGameMessage.class);
                         ChessPrinting chessPrinting = new ChessPrinting(loadGameMessage.getGame());
+                        chessPrinting.printWhiteBoard();
                         break;
                 }
             }

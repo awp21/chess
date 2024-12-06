@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import model.AddPlayer;
 import model.AuthData;
 import model.GameData;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
 import java.util.Collection;
@@ -24,6 +25,7 @@ public class InGameUI {
     private AuthData authData;
     private GameData gameData;
     private WSClient ws;
+    private ChessPrinting chessPrinting;
 
     public InGameUI(AuthData auth,GameData gameData){
         authData = auth;
@@ -55,6 +57,8 @@ public class InGameUI {
                     break;
                 case "redraw":
                     System.out.println("Redrawing board...");
+                    chessPrinting = new ChessPrinting(gameData);
+                    chessPrinting.printWhiteBoard();
                     //RE DRAW BOARD
                     break;
                 case "leave":
@@ -72,8 +76,9 @@ public class InGameUI {
                     //SERVER MESSAGE PLAYER MADE MOVE
                     ChessPosition start = chessPositionTranslator(parsedResponse[1]);
                     ChessPosition end = chessPositionTranslator(parsedResponse[2]);
+                    ChessMove move = new ChessMove(start,end,null);
                     try{
-                        commandSender(UserGameCommand.CommandType.MAKE_MOVE);
+                        moveSender(move);
                     } catch (Exception e) {
                         System.out.println("Makemove send failed");
                     }
@@ -94,7 +99,7 @@ public class InGameUI {
                 case "highlight":
                     System.out.println("Highlighting moves...");
                     //HIGHLIGHT MOVES PRINTBOARD
-                    ChessPrinting chessPrinting = new ChessPrinting(gameData);
+                    chessPrinting = new ChessPrinting(gameData);
                     chessPrinting.highlightSetter(true);
                     ChessPosition pos = chessPositionTranslator(parsedResponse[1]);
                     Collection<ChessMove> moves = gameData.game().validMoves(pos);
@@ -109,7 +114,14 @@ public class InGameUI {
     }
 
     private void commandSender(UserGameCommand.CommandType type)throws Exception{
-        UserGameCommand command = new UserGameCommand(type, authData.authToken(), 1);
+        UserGameCommand command = new UserGameCommand(type, authData.authToken(), gameData.gameID());
+        Gson g = new Gson();
+        String json = g.toJson(command);
+        ws.send(json);
+    }
+
+    private void moveSender(ChessMove move)throws Exception{
+        MakeMoveCommand command = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authData.authToken(), gameData.gameID(),move);
         Gson g = new Gson();
         String json = g.toJson(command);
         ws.send(json);

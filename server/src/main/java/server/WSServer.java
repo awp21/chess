@@ -23,12 +23,10 @@ import java.util.*;
 public class WSServer {
 
     private Map<Integer, List<Session>> sessionMap = new HashMap<>();
-    private Session session;
     private GameData gameData;
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
 //        System.out.printf("Received: %s", message);
-        this.session = session;
 
         Gson g = new Gson();
         UserGameCommand recievedCommand = g.fromJson(message, UserGameCommand.class);
@@ -42,13 +40,13 @@ public class WSServer {
 
 //        System.out.println(gameData);
 
-        sessionMapper(this.session,gameId);
+        sessionMapper(session,gameId);
 
         UserGameCommand.CommandType type = recievedCommand.getCommandType();
         switch (type){
             case CONNECT:
 //                System.out.println("Connect Recieved!");
-                loadHandler(recievedCommand,gameId,false);
+                loadHandler(session,recievedCommand,gameId,false);
                 break;
             case LEAVE:
 //                System.out.println("Leave Recieved!");
@@ -59,15 +57,16 @@ public class WSServer {
             case MAKE_MOVE:
 //                System.out.println("MakeMove Recieved!");
                 MakeMoveCommand makeMove = g.fromJson(message, MakeMoveCommand.class);
+                //MOVE HERE IS NULL
                 ChessMove move = makeMove.getMove();
                 Collection<ChessMove> validMoves = gameData.game().validMoves(move.getStartPosition());
                 if(validMoves.contains(move)){
                     ChessGame editedGame = gameData.game();
                     try{
                         editedGame.makeMove(move);
-                        Service.makeMove(editedGame,gameId,recievedCommand.getAuthToken());
+                        Service.makeMove(editedGame,gameId,makeMove.getAuthToken());
                         gameData = Service.getGameFromID(gameId,recievedCommand.getAuthToken());
-                        loadHandler(recievedCommand,gameId,true);
+                        loadHandler(session,recievedCommand,gameId,true);
                     } catch (UnauthorizedException e) {
                         errorSender("Unauthorized",session);
                         return;
@@ -85,7 +84,7 @@ public class WSServer {
         }
     }
 
-    private void loadHandler(UserGameCommand recievedCommand, int gameId,boolean moveMade) throws Exception {
+    private void loadHandler(Session session, UserGameCommand recievedCommand, int gameId,boolean moveMade) throws Exception {
         try{
             Service.getUsernameFromAuthToken(recievedCommand.getAuthToken());
             Set<GameData> games = Service.listGames(recievedCommand.getAuthToken());
@@ -108,12 +107,10 @@ public class WSServer {
                         //MAYBE START CLOSING SOME HERE
                     }
                     //I BREAK HERE
-                    if(moveMade&&!s.equals(session)){
+                    if(moveMade&&!s.equals(session)&&s.isOpen()){
                         loadGameSender(s);
                     }
                 }
-
-                //SEND ACTUAL GAME
             }else{
                 throw new BadRequestException("Game ID Doesn't exist");
             }
