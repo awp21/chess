@@ -30,7 +30,7 @@ public class Service {
         }
     }
 
-    public static GameData getGameFromID(int gameID,String authToken)throws UnauthorizedException{
+    public static GameData getGameFromID(int gameID,String authToken)throws UnauthorizedException, BadRequestException{
         try{
             if(authToken != null) {
                 if(authdao.get(authToken) == null) {
@@ -47,7 +47,7 @@ public class Service {
                     return gameDataTester;
                 }
             }
-            return null;
+            throw new BadRequestException("Game doesn't exist");
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }

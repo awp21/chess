@@ -2,8 +2,10 @@ package server;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
+import model.DataPlayersObservers;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.*;
@@ -23,103 +25,148 @@ import java.util.*;
 public class WSServer {
 
     private Map<Integer, List<Session>> sessionMap = new HashMap<>();
-    private GameData gameData;
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
-//        System.out.printf("Received: %s", message);
-
         Gson g = new Gson();
-        UserGameCommand recievedCommand = g.fromJson(message, UserGameCommand.class);
-        int gameId = recievedCommand.getGameID();
+        UserGameCommand receivedCommand = g.fromJson(message, UserGameCommand.class);
+        DataPlayersObservers allData;
         try{
-            gameData = Service.getGameFromID(gameId,recievedCommand.getAuthToken());
-        } catch (UnauthorizedException e) {
-            errorSender("Unauthorized",session);
+            allData = MessageExceptionTracker.checkTokenGame(receivedCommand.getAuthToken(), receivedCommand.getGameID());
+        } catch (BadRequestException | UnauthorizedException e) {
+            errorSender(e.getMessage(),session);
             return;
         }
+        GameData gameData = allData.gameData();
+        String sessionUsername = allData.username();
+        String white = allData.white();
+        String black = allData.black();
 
-//        System.out.println(gameData);
+        sessionMapper(session,gameData.gameID());
 
-        sessionMapper(session,gameId);
-
-        UserGameCommand.CommandType type = recievedCommand.getCommandType();
+        UserGameCommand.CommandType type = receivedCommand.getCommandType();
         switch (type){
             case CONNECT:
-//                System.out.println("Connect Recieved!");
-                loadHandler(session,recievedCommand,gameId,false);
+                loadHandlerJoin(session,allData);
                 break;
             case LEAVE:
-//                System.out.println("Leave Recieved!");
                 break;
             case RESIGN:
-//                System.out.println("Resign Recieved!");
                 break;
             case MAKE_MOVE:
-//                System.out.println("MakeMove Recieved!");
+
+                //IsGameOver
+                if(gameData.game().isBlackHasWon()||gameData.game().isWhiteHasWon()){
+                    errorSender("Game is over",session);
+                    return;
+                }
+
                 MakeMoveCommand makeMove = g.fromJson(message, MakeMoveCommand.class);
-                //MOVE HERE IS NULL
                 ChessMove move = makeMove.getMove();
                 Collection<ChessMove> validMoves = gameData.game().validMoves(move.getStartPosition());
-                if(validMoves.contains(move)){
-                    ChessGame editedGame = gameData.game();
-                    try{
-                        editedGame.makeMove(move);
-                        Service.makeMove(editedGame,gameId,makeMove.getAuthToken());
-                        gameData = Service.getGameFromID(gameId,recievedCommand.getAuthToken());
-                        loadHandler(session,recievedCommand,gameId,true);
-                    } catch (UnauthorizedException e) {
-                        errorSender("Unauthorized",session);
-                        return;
-                    } catch (InvalidMoveException e){
-                        errorSender(e.getMessage(),session);
-                        return;
-                    }
-                }else{
+                if(!validMoves.contains(move)){
                     errorSender("Invalid move",session);
+                    return;
                 }
-                break;
+                ChessGame editedGame = gameData.game();
+                try{
+                    ChessPiece piece = editedGame.getBoard().getPiece(move.getStartPosition());
+                    switch(piece.getTeamColor()){
+                        case WHITE:
+                            if(!sessionUsername.equals(white)){
+                                errorSender("You can't move a white piece",session);
+                                return;
+                            }
+                            break;
+                        case BLACK:
+                            if(!sessionUsername.equals(black)){
+                                errorSender("You can't move a black piece",session);
+                                return;
+                            }
+                            break;
+                    }
+                    editedGame.makeMove(move);
+                    Service.makeMove(editedGame, gameData.gameID(), makeMove.getAuthToken());
+                    loadHandlerMove(session,allData);
+                    return;
+                } catch (UnauthorizedException e) {
+                    errorSender("Unauthorized",session);
+                    return;
+                } catch (InvalidMoveException e){
+                    errorSender(e.getMessage(),session);
+                    return;
+                }
+
             default:
                 System.out.println("Default Case, didn't work");
                 break;
         }
     }
 
-    private void loadHandler(Session session, UserGameCommand recievedCommand, int gameId,boolean moveMade) throws Exception {
+    private void loadHandlerJoin(Session session, DataPlayersObservers allData) throws Exception {
         try{
-            Service.getUsernameFromAuthToken(recievedCommand.getAuthToken());
-            Set<GameData> games = Service.listGames(recievedCommand.getAuthToken());
+            GameData gameData = allData.gameData();
+            String white = allData.white();
+            String black = allData.black();
+            String sessionUsername = allData.username();
+            loadGameSender(session,gameData);
 
-            Iterator<GameData> gameIterator = games.iterator();
-            boolean idCheck = false;
-            int gameIDInt = -1;
-            while(gameIterator.hasNext()){
-                gameIDInt = gameIterator.next().gameID();
-                if(gameIDInt == gameId){
-                    idCheck = true;
-                }
-            }
-            if(idCheck){
-                loadGameSender(session);
-                List<Session> j = sessionMap.get(gameId);
-                for(Session s : j){
-                    if(!s.equals(session)&&s.isOpen()){
-                        notificationSender("another joined",s);
-                        //MAYBE START CLOSING SOME HERE
-                    }
-                    //I BREAK HERE
-                    if(moveMade&&!s.equals(session)&&s.isOpen()){
-                        loadGameSender(s);
+            List<Session> j = sessionMap.get(gameData.gameID());
+            for(Session s : j){
+                if(!s.equals(session)&&s.isOpen()){
+                    if(sessionUsername.equals(white)){
+                        notificationSender(sessionUsername + " joined as white",s);
+                    } else if (sessionUsername.equals(black)) {
+                        notificationSender(sessionUsername + " joined as black",s);
+                    }else {
+                        notificationSender(sessionUsername + " joined as observer",s);
                     }
                 }
-            }else{
-                throw new BadRequestException("Game ID Doesn't exist");
             }
-        }catch (UnauthorizedException e) {
-            errorSender("Unauthorized",session);
-        }catch (BadRequestException e){
-            errorSender(e.getMessage(),session);
         }catch(WebSocketException e){
-            System.out.println("WEbsocketBroke");
+            System.out.println("WebsocketBroke");
+        }
+    }
+
+    private void loadHandlerMove(Session session, DataPlayersObservers allData) throws Exception {
+        try{
+            GameData gameData = allData.gameData();
+            String white = allData.white();
+            String black = allData.black();
+            String sessionUsername = allData.username();
+            loadGameSender(session,gameData);
+            boolean blackCheckedWhite = gameData.game().isInCheck(ChessGame.TeamColor.WHITE);
+            boolean whiteCheckedBlack = gameData.game().isInCheck(ChessGame.TeamColor.WHITE);
+            boolean blackCheckMatedWhite = gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE);
+            boolean whiteCheckMatedBlack = gameData.game().isInCheckmate(ChessGame.TeamColor.BLACK);
+
+            List<Session> j = sessionMap.get(gameData.gameID());
+            for(Session s : j){
+                if(!s.equals(session)&&s.isOpen()){
+                    loadGameSender(s,gameData);
+                    if(sessionUsername.equals(white)){
+                        notificationSender(sessionUsername + " made move blank",s);
+                    } else if (sessionUsername.equals(black)) {
+                        notificationSender(sessionUsername + " made move blank",s);
+                    }
+                }
+                if(blackCheckedWhite){
+                    if(blackCheckMatedWhite){
+                        notificationSender(white + " was check mated! Game over!",s);
+                    }else {
+                        notificationSender(white + " was checked!",s);
+                    }
+                }
+                if(whiteCheckedBlack){
+                    if(whiteCheckMatedBlack){
+                        notificationSender(black + " was check mated! Game over!",s);
+                    }else {
+                        notificationSender(black + " was checked!",s);
+                    }
+                }
+
+            }
+        }catch(WebSocketException e){
+            System.out.println("WebsocketBroke");
         }
     }
 
@@ -135,7 +182,7 @@ public class WSServer {
         }
     }
 
-    private void loadGameSender(Session session) throws Exception{
+    private void loadGameSender(Session session,GameData gameData) throws Exception{
         Gson g = new Gson();
         ServerMessage serverMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME,gameData);
         String jsonMessage = g.toJson(serverMessage);
