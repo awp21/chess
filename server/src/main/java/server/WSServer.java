@@ -49,17 +49,36 @@ public class WSServer {
                 loadHandlerJoin(session,allData);
                 break;
             case LEAVE:
+                List<Session> changeSessions = sessionMap.get(gameData.gameID());
+                changeSessions.remove(session);
+                sessionMap.replace(gameData.gameID(), changeSessions);
+                for(Session s : changeSessions){
+                    if(s.isOpen()){
+                        notificationSender(sessionUsername +" has left",s);
+                    }
+                }
+                //EDIT SQL OF GAME
                 break;
             case RESIGN:
+                ChessGame resignGame = gameData.game();
+                if(sessionUsername.equals(white)){
+                    resignGame.setBlackHasWon();
+                    //SEND NOTIFICATIONS
+                } else if (sessionUsername.equals(black)){
+                    resignGame.setWhiteHasWon();
+                }else {
+                    errorSender("You cannot resign as an observer",session);
+                    return;
+                }
+
+                Service.makeMove(resignGame, gameData.gameID(), receivedCommand.getAuthToken());
+
                 break;
             case MAKE_MOVE:
-
-                //IsGameOver
                 if(gameData.game().isBlackHasWon()||gameData.game().isWhiteHasWon()){
                     errorSender("Game is over",session);
                     return;
                 }
-
                 MakeMoveCommand makeMove = g.fromJson(message, MakeMoveCommand.class);
                 ChessMove move = makeMove.getMove();
                 Collection<ChessMove> validMoves = gameData.game().validMoves(move.getStartPosition());
@@ -95,7 +114,6 @@ public class WSServer {
                     errorSender(e.getMessage(),session);
                     return;
                 }
-
             default:
                 System.out.println("Default Case, didn't work");
                 break;
@@ -133,15 +151,21 @@ public class WSServer {
             String white = allData.white();
             String black = allData.black();
             String sessionUsername = allData.username();
+
             loadGameSender(session,gameData);
+
             boolean blackCheckedWhite = gameData.game().isInCheck(ChessGame.TeamColor.WHITE);
-            boolean whiteCheckedBlack = gameData.game().isInCheck(ChessGame.TeamColor.WHITE);
+            boolean whiteCheckedBlack = gameData.game().isInCheck(ChessGame.TeamColor.BLACK);
             boolean blackCheckMatedWhite = gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE);
             boolean whiteCheckMatedBlack = gameData.game().isInCheckmate(ChessGame.TeamColor.BLACK);
 
             List<Session> j = sessionMap.get(gameData.gameID());
+
             for(Session s : j){
-                if(!s.equals(session)&&s.isOpen()){
+                if (!s.isOpen()) {
+                    continue;
+                }
+                if(!s.equals(session)){
                     loadGameSender(s,gameData);
                     if(sessionUsername.equals(white)){
                         notificationSender(sessionUsername + " made move blank",s);
@@ -177,6 +201,9 @@ public class WSServer {
             addOneSession.add(session);
             sessionMap.put(gameId,addOneSession);
         }else{
+            if(sessions.contains(session)){
+                return;
+            }
             sessions.add(session);
             sessionMap.replace(gameId,sessions);
         }

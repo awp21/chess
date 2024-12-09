@@ -62,11 +62,8 @@ public class Service {
             }else{
                 throw new UnauthorizedException("AuthToken Null");
             }
-            if(getGameFromID(gameId,authToken)!=null){
-                gamedao.makeMoveInGame(game,gameId);
-                return;
-            }
-            throw new BadRequestException("GameID doesn't exist");
+            getGameFromID(gameId, authToken);
+            gamedao.makeMoveInGame(game, gameId);
         }catch(DataAccessException e){
             throw new RuntimeException(e);
         }

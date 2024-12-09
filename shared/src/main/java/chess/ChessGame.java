@@ -44,6 +44,13 @@ public class ChessGame {
         return whiteHasWon;
     }
 
+    public void setWhiteHasWon(){
+        whiteHasWon = true;
+    }
+
+    public void setBlackHasWon() {
+        blackHasWon = true;
+    }
 
     public boolean isBlackHasWon() {
         return blackHasWon;
