@@ -16,7 +16,7 @@ public class Service {
     private static final UserDAO USERDAO= new SQLUserDAO();
     private static final AuthDAO AUTHDAO = new SQLAuthDAO();
     public static final GameDAO GAMEDAO = new SQLGameDAO();
-    private static final SQLDA s = new SQLDA();
+    private static final SQLDA FFF = new SQLDA();
     //CHANGE THIS TO BE STATIC I THINK
 
     //MAKE METHOD
