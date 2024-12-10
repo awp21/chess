@@ -13,18 +13,18 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class Service {
-    private static final UserDAO Userdao= new SQLUserDAO();
-    private static final AuthDAO Authdao = new SQLAuthDAO();
-    public static final GameDAO Gamedao = new SQLGameDAO();
+    private static final UserDAO USERDAO= new SQLUserDAO();
+    private static final AuthDAO AUTHDAO = new SQLAuthDAO();
+    public static final GameDAO GAMEDAO = new SQLGameDAO();
 
     //MAKE METHOD
 
 
     public static void deleteData(){
         try {
-            Userdao.clear();
-            Authdao.clear();
-            Gamedao.clear();
+            USERDAO.clear();
+            AUTHDAO.clear();
+            GAMEDAO.clear();
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -33,7 +33,7 @@ public class Service {
     public static GameData getGameFromID(int gameID,String authToken)throws UnauthorizedException, BadRequestException{
         try{
             if(authToken != null) {
-                if(Authdao.get(authToken) == null) {
+                if(AUTHDAO.get(authToken) == null) {
                     throw new UnauthorizedException("Bad Authtoken");
                 }
             }else{
@@ -56,14 +56,14 @@ public class Service {
     public static void makeMove(ChessGame game, int gameId, String authToken) throws UnauthorizedException, BadRequestException{
         try{
             if(authToken != null) {
-                if(Authdao.get(authToken) == null) {
+                if(AUTHDAO.get(authToken) == null) {
                     throw new UnauthorizedException("Bad Authtoken");
                 }
             }else{
                 throw new UnauthorizedException("AuthToken Null");
             }
             getGameFromID(gameId, authToken);
-            Gamedao.makeMoveInGame(game, gameId);
+            GAMEDAO.makeMoveInGame(game, gameId);
         }catch(DataAccessException e){
             throw new RuntimeException(e);
         }
@@ -72,14 +72,14 @@ public class Service {
     public static void removePlayer(int gameId, String authToken, boolean kickWhite)throws UnauthorizedException, BadRequestException{
         try{
             if(authToken != null) {
-                if(Authdao.get(authToken) == null) {
+                if(AUTHDAO.get(authToken) == null) {
                     throw new UnauthorizedException("Bad Authtoken");
                 }
             }else{
                 throw new UnauthorizedException("AuthToken Null");
             }
             getGameFromID(gameId, authToken);
-            Gamedao.removePlayer(kickWhite, gameId);
+            GAMEDAO.removePlayer(kickWhite, gameId);
         }catch(DataAccessException e){
             throw new RuntimeException(e);
         }
@@ -88,8 +88,8 @@ public class Service {
     public static String getUsernameFromAuthToken(String authToken)throws UnauthorizedException{
         try{
             if(authToken != null) {
-                if (Authdao.get(authToken) != null) {
-                    return Authdao.get(authToken).username();
+                if (AUTHDAO.get(authToken) != null) {
+                    return AUTHDAO.get(authToken).username();
                 }
             }
             throw new UnauthorizedException("Error: unauthorized");
@@ -101,10 +101,10 @@ public class Service {
 
     public static void addPlayerToGame(String authToken, AddPlayer player)throws UnauthorizedException, BadRequestException,AlreadyTakenException{
         try{
-            if(Authdao.get(authToken)!=null){
-                if(Gamedao.getGame(player.gameID())!=null && player.playerColor() != null){
-                    if(Gamedao.spotEmpty(player.playerColor(),player.gameID())){
-                        Gamedao.updateGame(player);
+            if(AUTHDAO.get(authToken)!=null){
+                if(GAMEDAO.getGame(player.gameID())!=null && player.playerColor() != null){
+                    if(GAMEDAO.spotEmpty(player.playerColor(),player.gameID())){
+                        GAMEDAO.updateGame(player);
                     }else{
                         throw new AlreadyTakenException("Error: already taken");
                     }
@@ -121,8 +121,8 @@ public class Service {
 
     public static Set<GameData> listGames(String auth)throws UnauthorizedException{
         try{
-            if(Authdao.get(auth)!=null){
-                return Gamedao.listAllGames();
+            if(AUTHDAO.get(auth)!=null){
+                return GAMEDAO.listAllGames();
             }
             throw new UnauthorizedException("Error: unauthorized");
         } catch (DataAccessException e) {
@@ -132,8 +132,8 @@ public class Service {
 
     public static GameData makeGame(String authToken,String gameName)throws UnauthorizedException{
         try{
-            if(Authdao.get(authToken)!=null){
-                return Gamedao.createGame(gameName);
+            if(AUTHDAO.get(authToken)!=null){
+                return GAMEDAO.createGame(gameName);
             }
             throw new UnauthorizedException("Error: unauthorized");
         } catch (DataAccessException e) {
@@ -143,8 +143,8 @@ public class Service {
 
     public static void logoutUser(String authToken)throws UnauthorizedException{
         try{
-            if(Authdao.get(authToken)!=null){
-                Authdao.deleteAuthToken(authToken);
+            if(AUTHDAO.get(authToken)!=null){
+                AUTHDAO.deleteAuthToken(authToken);
             }else{
                 throw new UnauthorizedException("Error: unauthorized");
             }
@@ -156,14 +156,14 @@ public class Service {
 
     public static AuthData loginUser(UserData user) throws UnauthorizedException, BadRequestException {
         try {
-            if(null==Userdao.get(user.username())){
+            if(null==USERDAO.get(user.username())){
                 throw new BadRequestException("Error: user does not exist");
             }
-            if(!BCrypt.checkpw(user.password(),Userdao.get(user.username()).password())){
+            if(!BCrypt.checkpw(user.password(),USERDAO.get(user.username()).password())){
                 throw new UnauthorizedException("Error: incorrect password");
             }
 
-            return Authdao.create(user.username());
+            return AUTHDAO.create(user.username());
         }catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
@@ -175,15 +175,15 @@ public class Service {
                 throw new BadRequestException("Error: bad request");
             }
 
-            if(null!=Userdao.get(newUser.username())){
+            if(null!=USERDAO.get(newUser.username())){
                 throw new AlreadyTakenException("Error: already taken");
             }
 
             String hashedPassword = BCrypt.hashpw(newUser.password(), BCrypt.gensalt());
             newUser = new UserData(newUser.username(),hashedPassword, newUser.email());
 
-            Userdao.create(newUser);
-            return Authdao.create(newUser.username());
+            USERDAO.create(newUser);
+            return AUTHDAO.create(newUser.username());
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
