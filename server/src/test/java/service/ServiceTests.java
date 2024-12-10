@@ -61,7 +61,7 @@ public class ServiceTests {
             Service.addPlayerToGame(auth.authToken(),player);
             Service.addPlayerToGame(luigiAuth.authToken(), luigiPlays);
             //THIS IS WHERE GAMEDAO IS WERID, FIX IT
-            GameData tester = Service.gamedao.getGame(id);
+            GameData tester = Service.Gamedao.getGame(id);
             Assertions.assertEquals(tester.whiteUsername(),alreadyMadeUser.username(),"Player 1 not added");
             Assertions.assertEquals(tester.blackUsername(),player2.username(),"Player 2 not added");
         } catch (UnauthorizedException | BadRequestException | AlreadyTakenException | DataAccessException e) {
