@@ -28,6 +28,9 @@ public class InGameUI {
     private WSClient ws;
     private ChessPrinting chessPrinting;
 
+    //MAKE SETTER TO SET GAMEDATA WHEN I GET LOADGAMES
+
+    //KEEP TRACK IF JOINED AS WHITE OR BLACK OR OBSERVER
     public InGameUI(AuthData auth,GameData gameData){
         authData = auth;
         this.gameData = gameData;
@@ -58,11 +61,6 @@ public class InGameUI {
                     break;
                 case "redraw":
                     System.out.println("Redrawing board...");
-                    try{
-                        gameData = Service.getGameFromID(gameData.gameID(),authData.authToken());
-                    }catch (Exception e){
-                        throw new RuntimeException("Big problem");
-                    }
                     chessPrinting = new ChessPrinting(gameData);
                     chessPrinting.printWhiteBoard();
                     //RE DRAW BOARD
