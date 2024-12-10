@@ -68,32 +68,32 @@ public class ChessPrinting {
             case WHITE:
                 switch (type) {
                     case ROOK:
-                        return EscapeSequences.WHITE_ROOK;
+                        return EscapeSequences.SET_TEXT_COLOR_RED+EscapeSequences.WHITE_ROOK;
                     case BISHOP:
-                        return EscapeSequences.WHITE_BISHOP;
+                        return EscapeSequences.SET_TEXT_COLOR_RED+EscapeSequences.WHITE_BISHOP;
                     case QUEEN:
-                        return EscapeSequences.WHITE_QUEEN;
+                        return EscapeSequences.SET_TEXT_COLOR_RED+EscapeSequences.WHITE_QUEEN;
                     case KING:
-                        return EscapeSequences.WHITE_KING;
+                        return EscapeSequences.SET_TEXT_COLOR_RED+EscapeSequences.WHITE_KING;
                     case KNIGHT:
-                        return EscapeSequences.WHITE_KNIGHT;
+                        return EscapeSequences.SET_TEXT_COLOR_RED+EscapeSequences.WHITE_KNIGHT;
                     case PAWN:
-                        return EscapeSequences.WHITE_PAWN;
+                        return EscapeSequences.SET_TEXT_COLOR_RED+EscapeSequences.WHITE_PAWN;
                 }
             case BLACK:
                 switch (type) {
                     case ROOK:
-                        return EscapeSequences.BLACK_ROOK;
+                        return EscapeSequences.SET_TEXT_COLOR_BLUE+EscapeSequences.BLACK_ROOK;
                     case BISHOP:
-                        return EscapeSequences.BLACK_BISHOP;
+                        return EscapeSequences.SET_TEXT_COLOR_BLUE+EscapeSequences.BLACK_BISHOP;
                     case QUEEN:
-                        return EscapeSequences.BLACK_QUEEN;
+                        return EscapeSequences.SET_TEXT_COLOR_BLUE+EscapeSequences.BLACK_QUEEN;
                     case KING:
-                        return EscapeSequences.BLACK_KING;
+                        return EscapeSequences.SET_TEXT_COLOR_BLUE+EscapeSequences.BLACK_KING;
                     case KNIGHT:
-                        return EscapeSequences.BLACK_KNIGHT;
+                        return EscapeSequences.SET_TEXT_COLOR_BLUE+EscapeSequences.BLACK_KNIGHT;
                     case PAWN:
-                        return EscapeSequences.BLACK_PAWN;
+                        return EscapeSequences.SET_TEXT_COLOR_BLUE+EscapeSequences.BLACK_PAWN;
                 }
         }
         return null;
@@ -123,10 +123,10 @@ public class ChessPrinting {
                 System.out.print(colorPrinter(pos));
             }
         }
-        //HERE ADD HIGHLIGHTS
         ChessPiece piece = board.getPiece(pos);
         if(piece != null){
             System.out.print(piecePrinter(piece));
+            System.out.print(EscapeSequences.RESET_TEXT_COLOR);
         }else{
             System.out.print(EscapeSequences.EMPTY);
         }

@@ -58,6 +58,13 @@ public class WSServer {
                     }
                 }
                 //EDIT SQL OF GAME
+                if(sessionUsername.equals(white)){
+                    Service.removePlayer(gameData.gameID(), receivedCommand.getAuthToken(),true);
+                }
+                if(sessionUsername.equals(black)){
+                    Service.removePlayer(gameData.gameID(), receivedCommand.getAuthToken(),false);
+                }
+
                 break;
             case RESIGN:
                 ChessGame resignGame = gameData.game();

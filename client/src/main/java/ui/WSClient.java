@@ -18,6 +18,7 @@ public class WSClient extends Endpoint {
         this.session = container.connectToServer(this, uri);
 
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+            @Override
             public void onMessage(String message) {
                 //CHANGE JSON TO OBJECT
                 //MAKE SERVER MESSAGE

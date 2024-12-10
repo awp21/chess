@@ -69,6 +69,22 @@ public class Service {
         }
     }
 
+    public static void removePlayer(int gameId, String authToken, boolean kickWhite)throws UnauthorizedException, BadRequestException{
+        try{
+            if(authToken != null) {
+                if(authdao.get(authToken) == null) {
+                    throw new UnauthorizedException("Bad Authtoken");
+                }
+            }else{
+                throw new UnauthorizedException("AuthToken Null");
+            }
+            getGameFromID(gameId, authToken);
+            gamedao.removePlayer(kickWhite, gameId);
+        }catch(DataAccessException e){
+            throw new RuntimeException(e);
+        }
+    }
+
     public static String getUsernameFromAuthToken(String authToken)throws UnauthorizedException{
         try{
             if(authToken != null) {

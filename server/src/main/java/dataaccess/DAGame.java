@@ -68,5 +68,10 @@ public class DAGame implements GameDAO{
         //OOPS
     }
 
+    @Override
+    public void removePlayer(boolean kickWhite, int gameId) throws DataAccessException {
+        //OOPS
+    }
+
     private Set<GameData> gameDataBase = new HashSet<>();
 }

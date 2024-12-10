@@ -139,4 +139,18 @@ public class SQLGameDAO implements GameDAO{
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void removePlayer(boolean kickWhite, int gameId) throws DataAccessException {
+        String command = kickWhite ? "UPDATE gamedatabase SET whiteUsername =? WHERE id =?" : "UPDATE gamedatabase SET blackUsername =? WHERE id =?";
+        try (Connection conn = DatabaseManager.getConnection()) {
+            PreparedStatement preparedStatement = conn.prepareStatement(command);
+            //HERE WILL PROBABLY BREAK
+            preparedStatement.setString(1,null);
+            preparedStatement.setInt(2,gameId);
+            preparedStatement.executeUpdate();
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
