@@ -5,7 +5,7 @@ import model.AddPlayer;
 import model.AuthData;
 import model.GameData;
 import model.ListGamesResult;
-import service.Service;
+
 
 import java.security.Provider;
 import java.util.*;
@@ -108,8 +108,8 @@ public class PostLogin {
                             AddPlayer player = new AddPlayer(parsedResponse[2],gameNumber, authData.username());
                             serverfacade.joinGame(player,authData.authToken());
                             gamesList = mapGames();
-                            GameData game = Service.getGameFromID(gameNumber,authData.authToken());
-                            InGameUI ingame = new InGameUI(authData,game);
+
+                            InGameUI ingame = new InGameUI(authData);
                             ingame.inGameLooper();
 
                         }else{

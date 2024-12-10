@@ -1,13 +1,10 @@
 package ui;
 
-import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import com.google.gson.Gson;
-import model.AddPlayer;
 import model.AuthData;
 import model.GameData;
-import service.Service;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
@@ -31,15 +28,20 @@ public class InGameUI {
     //MAKE SETTER TO SET GAMEDATA WHEN I GET LOADGAMES
 
     //KEEP TRACK IF JOINED AS WHITE OR BLACK OR OBSERVER
-    public InGameUI(AuthData auth,GameData gameData){
+
+    //WHEN I GET FIRST LOADGAME, SET MY GAMEDATA
+    public InGameUI(AuthData auth){
         authData = auth;
-        this.gameData = gameData;
         try{
-            ws = new WSClient();
+            ws = new WSClient(this);
             commandSender(UserGameCommand.CommandType.CONNECT);
         } catch (Exception e) {
             System.out.println("I've decided not to work right now.");
         }
+    }
+
+    public void setGameData(GameData game){
+        gameData = game;
     }
 
     public void inGameLooper(){

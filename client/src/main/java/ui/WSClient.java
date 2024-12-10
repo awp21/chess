@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class WSClient extends Endpoint {
     public Session session;
 
-    public WSClient() throws Exception {
+    public WSClient(InGameUI ui) throws Exception {
         URI uri = new URI("ws://localhost:8080/ws");
         WebSocketContainer container = ContainerProvider.getWebSocketContainer();
         this.session = container.connectToServer(this, uri);
@@ -22,8 +22,6 @@ public class WSClient extends Endpoint {
         this.session.addMessageHandler(new MessageHandler.Whole<String>() {
             @Override
             public void onMessage(String message) {
-                //CHANGE JSON TO OBJECT
-                //MAKE SERVER MESSAGE
                 Gson g = new Gson();
                 ServerMessage recievedCommand = g.fromJson(message, ServerMessage.class);
                 switch(recievedCommand.getServerMessageType()){
@@ -37,7 +35,7 @@ public class WSClient extends Endpoint {
                         break;
                     case LOAD_GAME:
                         LoadGameMessage loadGameMessage = g.fromJson(message, LoadGameMessage.class);
-
+                        ui.setGameData(loadGameMessage.getGame());
                         ChessPrinting chessPrinting = new ChessPrinting(loadGameMessage.getGame());
                         chessPrinting.printWhiteBoard();
                         break;
