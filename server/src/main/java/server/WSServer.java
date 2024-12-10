@@ -61,18 +61,30 @@ public class WSServer {
                 break;
             case RESIGN:
                 ChessGame resignGame = gameData.game();
-                if(sessionUsername.equals(white)){
-                    resignGame.setBlackHasWon();
-                    //SEND NOTIFICATIONS
-                } else if (sessionUsername.equals(black)){
-                    resignGame.setWhiteHasWon();
-                }else {
+                List<Session> resignedSessions = sessionMap.get(gameData.gameID());
+                if(resignGame.isWhiteHasWon()||resignGame.isBlackHasWon()){
+                    errorSender("Game has ended",session);
+                    return;
+                }
+                if(!sessionUsername.equals(white)&&!sessionUsername.equals(black)){
                     errorSender("You cannot resign as an observer",session);
                     return;
                 }
-
+                boolean sendWhite = true;
+                if(sessionUsername.equals(white)){
+                    resignGame.setBlackHasWon();
+                }
+                if (sessionUsername.equals(black)){
+                    resignGame.setWhiteHasWon();
+                    sendWhite = false;
+                }
+                String resignedColor = sendWhite ? "White " : "Black ";
+                for(Session s : resignedSessions){
+                    if(s.isOpen()){
+                        notificationSender(resignedColor + "has resigned!",s);
+                    }
+                }
                 Service.makeMove(resignGame, gameData.gameID(), receivedCommand.getAuthToken());
-
                 break;
             case MAKE_MOVE:
                 if(gameData.game().isBlackHasWon()||gameData.game().isWhiteHasWon()){
