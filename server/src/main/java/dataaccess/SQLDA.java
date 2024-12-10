@@ -9,7 +9,6 @@ public class SQLDA {
         } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private final String[] nukeData = {

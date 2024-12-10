@@ -11,9 +11,6 @@ import java.util.Set;
 
 public class Server {
 
-
-    private Service s = new Service();
-
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
@@ -47,9 +44,9 @@ public class Server {
         AddPlayer player = g.fromJson(req.body(), AddPlayer.class);
         String username;
         try {
-            username = s.getUsernameFromAuthToken(authToken);
+            username = Service.getUsernameFromAuthToken(authToken);
             player = new AddPlayer(player.playerColor(), player.gameID(), username);
-            s.addPlayerToGame(authToken,player);
+            Service.addPlayerToGame(authToken,player);
             res.status(200);
             return "{}";
         }catch (UnauthorizedException e){
@@ -71,7 +68,7 @@ public class Server {
         Gson g = new Gson();
         String authToken = req.headers("authorization");
         try{
-            Set<GameData> allGames = s.listGames(authToken);
+            Set<GameData> allGames = Service.listGames(authToken);
             res.status(200);
             ListGamesResult listgamesresult = new ListGamesResult(allGames);
             return g.toJson(listgamesresult);
@@ -89,7 +86,7 @@ public class Server {
         try{
             String name = g.fromJson(req.body(),GameData.class).gameName();
             GameData retGame;
-            retGame=s.makeGame(authToken,name);
+            retGame=Service.makeGame(authToken,name);
             res.status(200);
             return g.toJson(new GameIDOnly(retGame.gameID()));
         }catch (UnauthorizedException e){
@@ -103,7 +100,7 @@ public class Server {
         Gson g = new Gson();
         String authToken = req.headers("authorization");
         try{
-            s.logoutUser(authToken);
+            Service.logoutUser(authToken);
             res.status(200);
             return "{}";
         }catch (UnauthorizedException e){
@@ -119,7 +116,7 @@ public class Server {
 
         AuthData auth;
         try {
-            auth = s.loginUser(logUser);
+            auth = Service.loginUser(logUser);
         }catch (UnauthorizedException |BadRequestException e) {
             res.status(401);
             ErrorModel error = new ErrorModel(e.getMessage());
@@ -131,7 +128,7 @@ public class Server {
 
 
     private String deleteAll(Response res){
-        s.deleteData();
+        Service.deleteData();
         Gson g = new Gson();
         res.status(200);
         return "{}";
@@ -142,7 +139,7 @@ public class Server {
         UserData regUser = g.fromJson(req.body(), UserData.class);
         AuthData auth;
         try{
-            auth = s.register(regUser);
+            auth = Service.register(regUser);
         }catch (AlreadyTakenException e){
             res.status(403);
             ErrorModel error = new ErrorModel(e.getMessage());

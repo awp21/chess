@@ -2,7 +2,9 @@ package ui;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -26,13 +28,14 @@ public class WSClient extends Endpoint {
                 ServerMessage recievedCommand = g.fromJson(message, ServerMessage.class);
                 switch(recievedCommand.getServerMessageType()){
                     case NOTIFICATION:
-                        System.out.println("Notification Recieved");
+                        NotificationMessage notificationMessage = g.fromJson(message,NotificationMessage.class);
+                        System.out.println(notificationMessage.getMessageText());
                         break;
                     case ERROR:
-                        System.out.println("Error Recieved");
+                        ErrorMessage errorMessage = g.fromJson(message,ErrorMessage.class);
+                        System.out.println(errorMessage.getErrorText());
                         break;
                     case LOAD_GAME:
-                        System.out.println("Loadgame Recieved");
                         LoadGameMessage loadGameMessage = g.fromJson(message, LoadGameMessage.class);
                         ChessPrinting chessPrinting = new ChessPrinting(loadGameMessage.getGame());
                         chessPrinting.printWhiteBoard();

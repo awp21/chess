@@ -5,7 +5,9 @@ import model.AddPlayer;
 import model.AuthData;
 import model.GameData;
 import model.ListGamesResult;
+import service.Service;
 
+import java.security.Provider;
 import java.util.*;
 
 public class PostLogin {
@@ -106,9 +108,8 @@ public class PostLogin {
                             AddPlayer player = new AddPlayer(parsedResponse[2],gameNumber, authData.username());
                             serverfacade.joinGame(player,authData.authToken());
                             gamesList = mapGames();
-
-                            //MAYBE THIS IS THE PROBLEM HERE!!! THE GET GAME NUMBER
-                            InGameUI ingame = new InGameUI(authData,gamesList.get(gameNumber-1));
+                            GameData game = Service.getGameFromID(gameNumber,authData.authToken());
+                            InGameUI ingame = new InGameUI(authData,game);
                             ingame.inGameLooper();
 
                         }else{
