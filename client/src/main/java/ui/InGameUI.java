@@ -24,14 +24,17 @@ public class InGameUI {
     private GameData gameData;
     private WSClient ws;
     private ChessPrinting chessPrinting;
-
-    //MAKE SETTER TO SET GAMEDATA WHEN I GET LOADGAMES
+    private int gameID;
+    private String color;
 
     //KEEP TRACK IF JOINED AS WHITE OR BLACK OR OBSERVER
 
     //WHEN I GET FIRST LOADGAME, SET MY GAMEDATA
-    public InGameUI(AuthData auth){
+    public InGameUI(AuthData auth,int gameId,String color){
         authData = auth;
+        gameID = gameId;
+        this.color = color;
+
         try{
             ws = new WSClient(this);
             commandSender(UserGameCommand.CommandType.CONNECT);
@@ -42,6 +45,16 @@ public class InGameUI {
 
     public void setGameData(GameData game){
         gameData = game;
+        printColorBoard();
+    }
+
+    public void printColorBoard(){
+        if(color.equals("BLACK")){
+            chessPrinting.printBlackBoard();
+        }else{
+            chessPrinting.printWhiteBoard();
+        }
+        System.out.print(inGame);
     }
 
     public void inGameLooper(){
@@ -50,6 +63,9 @@ public class InGameUI {
 
         while(true) {
             System.out.print(inGame);
+
+
+
             response = reader.nextLine();
             try{
                 parsedResponse = response.split(" ");
@@ -64,7 +80,11 @@ public class InGameUI {
                 case "redraw":
                     System.out.println("Redrawing board...");
                     chessPrinting = new ChessPrinting(gameData);
-                    chessPrinting.printWhiteBoard();
+                    if(color.equals("BLACK")){
+                        chessPrinting.printBlackBoard();
+                    }else{
+                        chessPrinting.printWhiteBoard();
+                    }
                     //RE DRAW BOARD
                     break;
                 case "leave":
@@ -88,8 +108,6 @@ public class InGameUI {
                     } catch (Exception e) {
                         System.out.println("Makemove send failed");
                     }
-
-                    System.out.println("Move Made!");
                     break;
                 case "resign":
                     System.out.println("Resigning...");
@@ -100,27 +118,27 @@ public class InGameUI {
                         System.out.println("Resign send failed");
                     }
 
-                    System.out.println("Resigned");
                     break;
                 case "highlight":
                     System.out.println("Highlighting moves...");
-                    //HIGHLIGHT MOVES PRINTBOARD
+
                     chessPrinting = new ChessPrinting(gameData);
                     chessPrinting.highlightSetter(true);
                     ChessPosition pos = chessPositionTranslator(parsedResponse[1]);
                     Collection<ChessMove> moves = gameData.game().validMoves(pos);
                     chessPrinting.collectionSetter(moves);
-                    chessPrinting.printWhiteBoard();
+                    printColorBoard();
                     chessPrinting.highlightSetter(false);
                     break;
                 default:
                     System.out.println("Command not understood, try again");
+                    break;
             }
         }
     }
 
     private void commandSender(UserGameCommand.CommandType type)throws Exception{
-        UserGameCommand command = new UserGameCommand(type, authData.authToken(), gameData.gameID());
+        UserGameCommand command = new UserGameCommand(type, authData.authToken(), gameID);
         Gson g = new Gson();
         String json = g.toJson(command);
         ws.send(json);

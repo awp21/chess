@@ -105,6 +105,7 @@ public class ChessPrinting {
 
     public void collectionSetter(Collection<ChessMove> validMoves){
         this.validMoves = validMoves;
+
     }
 
     private void loopPrinter(int row, int col,ChessBoard board){
@@ -114,9 +115,11 @@ public class ChessPrinting {
         }
         else{
             Collection<ChessPosition> possibleMoves = new HashSet<>();
-            for(ChessMove m : validMoves){
+            for(ChessMove m : validMoves) {
                 possibleMoves.add(m.getEndPosition());
             }
+            //MAYBE BREAKS
+            possibleMoves.add(validMoves.iterator().next().getStartPosition());
             if(possibleMoves.contains(pos)){
                 System.out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
             }else{

@@ -109,7 +109,7 @@ public class PostLogin {
                             serverfacade.joinGame(player,authData.authToken());
                             gamesList = mapGames();
 
-                            InGameUI ingame = new InGameUI(authData);
+                            InGameUI ingame = new InGameUI(authData,gameNumber,color);
                             ingame.inGameLooper();
 
                         }else{
@@ -131,6 +131,10 @@ public class PostLogin {
                         int lookGame = Integer.parseInt(parsedResponse[1])-1;
                         GameData gameToSee = gamesList.get(Integer.parseInt(parsedResponse[1])-1);
                         serverfacade.observeGame(gameToSee);
+                        int gameNumber = idMap.get(Integer.parseInt(parsedResponse[1]));
+                        String color = "Observer";
+                        InGameUI ingame = new InGameUI(authData,gameNumber,color);
+                        ingame.inGameLooper();
                     } catch (IndexOutOfBoundsException e) {
                         System.out.println("This game number is out of bounds");
                     }catch(NumberFormatException e){

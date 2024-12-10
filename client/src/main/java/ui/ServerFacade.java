@@ -60,8 +60,8 @@ public class ServerFacade {
 
     public void observeGame(GameData gameData){
         ChessPrinting printer = new ChessPrinting(gameData);
-        printer.printWhiteBoard();
-        printer.printBlackBoard();
+        //printer.printWhiteBoard();
+        //printer.printBlackBoard();
     }
 
     public void clearData(String authToken) throws ResponseException {

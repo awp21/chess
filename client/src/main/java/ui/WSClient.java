@@ -36,8 +36,7 @@ public class WSClient extends Endpoint {
                     case LOAD_GAME:
                         LoadGameMessage loadGameMessage = g.fromJson(message, LoadGameMessage.class);
                         ui.setGameData(loadGameMessage.getGame());
-                        ChessPrinting chessPrinting = new ChessPrinting(loadGameMessage.getGame());
-                        chessPrinting.printWhiteBoard();
+//                        ui.printColorBoard();
                         break;
                 }
             }
