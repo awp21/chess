@@ -28,10 +28,12 @@ public class WSClient extends Endpoint {
                     case NOTIFICATION:
                         NotificationMessage notificationMessage = g.fromJson(message,NotificationMessage.class);
                         System.out.println(notificationMessage.getMessageText());
+                        System.out.print("[PLAYING]>>>");
                         break;
                     case ERROR:
                         ErrorMessage errorMessage = g.fromJson(message,ErrorMessage.class);
                         System.out.println(errorMessage.getErrorText());
+                        System.out.print("[PLAYING]>>> ");
                         break;
                     case LOAD_GAME:
                         LoadGameMessage loadGameMessage = g.fromJson(message, LoadGameMessage.class);

@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import com.google.gson.Gson;
 import model.AuthData;
@@ -60,6 +61,7 @@ public class InGameUI {
         System.out.print(inGame);
     }
 
+
     public void inGameLooper(){
         String response;
         String [] parsedResponse;
@@ -98,7 +100,15 @@ public class InGameUI {
                     //SERVER MESSAGE PLAYER MADE MOVE
                     ChessPosition start = chessPositionTranslator(parsedResponse[1]);
                     ChessPosition end = chessPositionTranslator(parsedResponse[2]);
-                    ChessMove move = new ChessMove(start,end,null);
+                    ChessPiece.PieceType promote = null;
+                    try{
+                        String promoteString = parsedResponse[3];
+                        promote = promoteStringTranslator(promoteString);
+                    } catch (Exception ignore) {
+                    }
+
+
+                    ChessMove move = new ChessMove(start,end,promote);
                     try{
                         moveSender(move);
                     } catch (Exception e) {
@@ -106,12 +116,25 @@ public class InGameUI {
                     }
                     break;
                 case "resign":
-                    System.out.println("Resigning...");
-                    //SERVER MESSAGE PLAYER resigned
-                    try{
-                        commandSender(UserGameCommand.CommandType.RESIGN);
-                    } catch (Exception e) {
-                        System.out.println("Resign send failed");
+
+                    boolean waitForResign = true;
+                    while(waitForResign) {
+                        System.out.println("Are you sure you want to resign? y/n");
+                        String res = reader.nextLine();
+                        if (res.equals("y")) {
+                            System.out.println("Resigning!");
+                            waitForResign = false;
+                            try{
+                                commandSender(UserGameCommand.CommandType.RESIGN);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        } else if (res.equals("n")) {
+                            System.out.println("Continuing Game!");
+                            waitForResign = false;
+                        } else {
+                            System.out.println("Command not understood, try that again?");
+                        }
                     }
 
                     break;
@@ -131,6 +154,18 @@ public class InGameUI {
                     break;
             }
         }
+    }
+
+    //RESIGN MUST PROMPT TO RESIGN
+    //RESIGN MUST include name not color
+
+
+
+    private ChessPiece.PieceType promoteStringTranslator(String promoteString){
+        switch(promoteString){
+
+        }
+        return ChessPiece.PieceType.PAWN;
     }
 
     private void commandSender(UserGameCommand.CommandType type)throws Exception{

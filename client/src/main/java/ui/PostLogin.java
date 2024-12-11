@@ -160,6 +160,7 @@ public class PostLogin {
                     return "quit";
                 default:
                     System.out.println("Command not understood, try again");
+                    System.out.print("[PLAYING]>>>");
             }
         }
     }

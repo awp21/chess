@@ -117,6 +117,9 @@ public class WSServer {
         String sessionUsername = allData.username();
         String white = allData.white();
         String black = allData.black();
+        System.out.println("White Username = "+white);
+        System.out.println("Black Username = "+black);
+        System.out.println("Person who sent session = "+sessionUsername);
         ChessGame resignGame = gameData.game();
         List<Session> resignedSessions = sessionMap.get(gameData.gameID());
         if(resignGame.isWhiteHasWon()||resignGame.isBlackHasWon()){
@@ -127,18 +130,15 @@ public class WSServer {
             errorSender("You cannot resign as an observer",session);
             return;
         }
-        boolean sendWhite = true;
         if(sessionUsername.equals(white)){
             resignGame.setBlackHasWon();
         }
         if (sessionUsername.equals(black)){
             resignGame.setWhiteHasWon();
-            sendWhite = false;
         }
-        String resignedColor = sendWhite ? "White " : "Black ";
         for(Session s : resignedSessions){
             if(s.isOpen()){
-                notificationSender(resignedColor + "has resigned!",s);
+                notificationSender(sessionUsername + " has resigned!",s);
             }
         }
         Service.makeMove(resignGame, gameData.gameID(), receivedCommand.getAuthToken());
