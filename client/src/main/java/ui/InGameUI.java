@@ -41,10 +41,13 @@ public class InGameUI {
         } catch (Exception e) {
             System.out.println("I've decided not to work right now.");
         }
+        //HERE
+        inGameLooper();
     }
 
     public void setGameData(GameData game){
         gameData = game;
+        chessPrinting = new ChessPrinting(game);
         printColorBoard();
     }
 
@@ -62,9 +65,6 @@ public class InGameUI {
         String [] parsedResponse;
 
         while(true) {
-            System.out.print(inGame);
-
-
 
             response = reader.nextLine();
             try{
@@ -80,11 +80,7 @@ public class InGameUI {
                 case "redraw":
                     System.out.println("Redrawing board...");
                     chessPrinting = new ChessPrinting(gameData);
-                    if(color.equals("BLACK")){
-                        chessPrinting.printBlackBoard();
-                    }else{
-                        chessPrinting.printWhiteBoard();
-                    }
+                    printColorBoard();
                     //RE DRAW BOARD
                     break;
                 case "leave":
