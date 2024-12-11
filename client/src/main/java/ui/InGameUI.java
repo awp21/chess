@@ -183,7 +183,6 @@ public class InGameUI {
         int c = column - 'A' + 1;
         int r = Integer.parseInt(String.valueOf(row));
         return new ChessPosition(r,c);
-        //NOT TESTED
     }
 
 }

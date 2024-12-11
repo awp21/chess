@@ -1,9 +1,6 @@
 package server;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
 import model.DataPlayersObservers;
 import model.GameData;
@@ -100,7 +97,7 @@ public class WSServer {
                     }
                     editedGame.makeMove(move);
                     Service.makeMove(editedGame, gameData.gameID(), makeMove.getAuthToken());
-                    loadHandlerMove(session,allData);
+                    loadHandlerMove(session,allData,move);
                     return;
                 } catch (UnauthorizedException e) {
                     errorSender("Unauthorized",session);
@@ -172,7 +169,7 @@ public class WSServer {
         }
     }
 
-    private void loadHandlerMove(Session session, DataPlayersObservers allData) throws Exception {
+    private void loadHandlerMove(Session session, DataPlayersObservers allData,ChessMove move) throws Exception {
         try{
             GameData gameData = allData.gameData();
             String white = allData.white();
@@ -195,9 +192,11 @@ public class WSServer {
                 if(!s.equals(session)){
                     loadGameSender(s,gameData);
                     if(sessionUsername.equals(white)){
-                        notificationSender(sessionUsername + " made move blank",s);
+                        String moveAsLetters = makeMoveTranslator(move);
+                        notificationSender(sessionUsername + " made move "+moveAsLetters,s);
                     } else if (sessionUsername.equals(black)) {
-                        notificationSender(sessionUsername + " made move blank",s);
+                        String moveAsLetters = makeMoveTranslator(move);
+                        notificationSender(sessionUsername + " made move "+moveAsLetters,s);
                     }
                 }
                 if(blackCheckedWhite){
@@ -219,6 +218,21 @@ public class WSServer {
         }catch(WebSocketException e){
             System.out.println("WebsocketBroke");
         }
+    }
+
+    private String makeMoveTranslator(ChessMove move){
+        ChessPosition startPos = move.getStartPosition();
+        ChessPosition endPos = move.getEndPosition();
+        int startPosRow = startPos.getRow();
+        int startPosCol = startPos.getColumn();
+        int endPosRow = endPos.getRow();
+        int endPosCol = endPos.getColumn();
+        char startRowCharacter = (char)(startPosRow+'0');
+        char startColumnLetter = (char)(startPosCol+'A'-1);
+        char endRowCharacter = (char)(endPosRow+'0');
+        char endColumnLetter = (char)(endPosCol+'A'-1);
+
+        return ""+startColumnLetter+startRowCharacter+" "+endColumnLetter+endRowCharacter;
     }
 
     private void sessionMapper(Session session, int gameId){
